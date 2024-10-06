@@ -1,0 +1,123 @@
+body>* {
+    width: 85vw;
+    margin: auto;
+}
+
+a {
+    cursor: pointer;
+    color: #3354b5;
+}
+
+#search {
+    width: calc(100% - 0.6em - 4px);
+    padding: 0.3em;
+}
+
+#activities {
+    display: flex;
+    max-height: 0;
+    transition: max-height 0.2s ease-out;
+    overflow: hidden;
+}
+
+#activities>* {
+    padding: 0.5em;
+}
+
+table {
+    width: 70vw;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border: solid 1px grey;
+    border-radius: 5px;
+    border-collapse: collapse;
+}
+
+thead tr {
+    height: 4em;
+}
+
+thead th:nth-child(3) {
+    width: 4em;
+}
+
+thead th:nth-child(4) {
+    width: 9em;
+}
+
+thead th:nth-child(5) {
+    width: 2em;
+}
+
+thead th:nth-child(6) {
+    width: 2em;
+}
+
+tbody tr {
+    border-top: solid 1px grey;
+    height: 5em;
+}
+
+tbody td {
+    padding: 1em;
+    height: 7ch;
+}
+
+#pagination-control {
+    display: flex;
+    justify-content: space-between;
+}
+
+#page-count-control {
+    display: flex
+}
+
+#page-count-control select {
+    margin-left: 0.5em;
+}
+
+#page-count-control p {
+    margin: 0;
+}
+
+#pagination-page-select * {
+    margin: 0.2em;
+    font-size: 0.9em;
+}
+
+#pagination-page-select {
+    display: flex;
+}
+
+#filters>div:first-child {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 1em;
+}
+
+#filters p {
+    margin: 0
+}
+
+#filters input {
+    width: calc(100% - 0.6em - 4px);
+    padding: 0.3em;
+    margin-bottom: 0.5em;
+}
+
+svg {
+    width: auto;
+    height: 90vh;
+    font: 10px sans-serif;
+    margin: auto;
+    border: solid 1px grey;
+    border-radius: 5px;
+}
+
+svg text {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

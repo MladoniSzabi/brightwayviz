@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="index.css">
+
+    <script src="d3.js"></script>
+    <script src="pagination.js"></script>
+    <script src="index.js"></script>
+</head>
+
+<body>
+    <h2 id="activities-heading">Database Search</h2>
+    <div id="activities">
+        <div>
+            <input placeholder="Search using activity name (Does not work yet)" type="text" id="search" />
+            <table>
+                <thead>
+                    <tr>
+                        <th>Activity Name</th>
+                        <th>Reference Product</th>
+                        <th>Unit</th>
+                        <th>Geography</th>
+                        <th>Activity Type</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="page-content">
+                </tbody>
+            </table>
+            <div id="pagination-control">
+                <div id="page-count-control">
+                    <p>Items per page: </p>
+                    <select id="pagination-item-count">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+                <div id="result-count">0 total results</div>
+                <div id="pagination-page-select">
+                </div>
+            </div>
+        </div>
+        <div id="filters">
+            <div>
+                <p>Filters</p>
+                <a>Clear all</a>
+            </div>
+            <p> Does not work yet </p>
+            <div id="applied-filters">
+            </div>
+            <input placeholder="Sector" id="sector" />
+            <input placeholder="Geography" id="geography" />
+            <input placeholder="Activity Type" id="activity-type" />
+            <input placeholder="ISIC Section" id="isic-section" />
+            <input placeholder="ISIC Class" id="isic-class" />
+        </div>
+    </div>
+
+    <div id="graph-container">
+    </div>
+
+</body>
+
+</html>
