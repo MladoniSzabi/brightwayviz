@@ -65,7 +65,7 @@ function setUpPaginationPageSelect(pages) {
     container.innerHTML = ""
     let prevArrow = document.createElement("button")
     prevArrow.innerHTML = "<"
-    if (CurrentPage == 0) {
+    if (CurrentPage <= 0) {
         prevArrow.disabled = true
     } else {
         prevArrow.onclick = () => {
@@ -80,7 +80,7 @@ function setUpPaginationPageSelect(pages) {
     let nextArrow = document.createElement("button")
     nextArrow.innerHTML = ">"
     let pageCount = Math.ceil(TotalItems / ItemsPerPage)
-    if (CurrentPage == pageCount - 1) {
+    if (CurrentPage >= pageCount - 1) {
         nextArrow.disabled = true
     } else {
         nextArrow.onclick = () => {
@@ -129,4 +129,15 @@ function loadActivities(currPage) {
     })
 }
 
-document.addEventListener("DOMContentLoaded", () => { console.log("Finished loading"); loadActivities(0) })
+function searchTermChanged(ev) {
+    SearchTerm = ev.target.value
+    let container = document.getElementById("page-content")
+    container.innerHTML = ""
+    loadActivities(0)
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    SearchTerm = document.getElementById("search").value
+    loadActivities(0)
+    document.getElementById("search").addEventListener("keyup", searchTermChanged)
+})

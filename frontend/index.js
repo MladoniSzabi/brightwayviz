@@ -279,7 +279,7 @@ function createTreeGraph() {
 
         nodeEnter.append("text")
             .attr("dy", "0.31em")
-            .attr("x", d => d._children ? -6 : 6)
+            .attr("x", d => (d._children ? -6 : 6) + d.data.childCount / 10)
             .attr("text-anchor", d => d._children ? "end" : "start")
             .text(d => d.data.name)
             .attr("stroke", "white")
@@ -355,7 +355,7 @@ function wrap(text, width) {
             lineHeight = 1.2, // ems
             y = text.attr("y"),
             dy = parseFloat(text.attr("dy")),
-            tspan = text.text(null).append("tspan").attr("x", d => d.children ? -6 : 6).attr("y", y).attr("dy", dy + "em")
+            tspan = text.text(null).append("tspan").attr("x", d => (d._children ? -6 : 6) + d.data.childCount / 10).attr("y", y).attr("dy", dy + "em")
         while (word = words.pop()) {
             line.push(word)
             tspan.text(line.join(" "))
@@ -363,7 +363,7 @@ function wrap(text, width) {
                 line.pop()
                 tspan.text(line.join(" "))
                 line = [word]
-                tspan = text.append("tspan").attr("x", d => d.children ? -6 : 6).attr("y", y).attr("dy", `${++lineNumber * lineHeight + dy}em`).text(word)
+                tspan = text.append("tspan").attr("x", d => (d._children ? -6 : 6) + d.data.childCount / 10).attr("y", y).attr("dy", `${++lineNumber * lineHeight + dy}em`).text(word)
             }
         }
     })
@@ -374,6 +374,8 @@ function createGraph() {
 }
 
 async function drawActivity(e) {
+
+    viewbox = null
 
     const activityContainer = document.getElementById("activities")
     activityContainer.style.maxHeight = null

@@ -122,7 +122,7 @@ def get_node():
     activity = acts[act_id]
     retval = {
         "id": activity["id"],
-        "name": activity["product"],
+        "name": activity["name"],
         "children": [],
         "childCount": len(activity["exchanges"])
     }
@@ -130,7 +130,7 @@ def get_node():
         next_act = acts[index]
         retval["children"].append({
             "id": next_act["id"],
-            "name": next_act["product"],
+            "name": next_act["name"],
             "childCount": len(next_act["exchanges"])
         })
     
