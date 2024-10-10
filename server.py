@@ -31,7 +31,10 @@ for index, act in enumerate(eidb):
         "location": actdict["location"],
         "type": actdict["type"],
         "unit": actdict["unit"],
-        "product": actdict["reference product"]
+        "product": actdict["reference product"],
+        "inputs" : [],
+        "biosphere": [],
+        "outputs": []
     })
     id_mapping[act.key[1]] = index
 
@@ -46,20 +49,24 @@ for index, act in enumerate(biodb):
         "location": "",
         "type": actdict["type"],
         "unit": actdict["unit"],
-        "product": actdict["name"]
+        "product": actdict["name"],
+        "inputs" : [],
+        "biosphere": [],
+        "outputs": []
     })
     id_mapping[act.key[1]] = index
 
 for act in eidb:
-    acts[id_mapping[act.key[1]]]['exchanges'] = []
     for exc in act.exchanges():
         if exc["input"][1] == act.key[1]:
             continue
         exc = exc.as_dict()
-        if exc["input"][1] not in id_mapping:
-            print(exc)
         
-        acts[id_mapping[act.key[1]]]['exchanges'].append(id_mapping[exc["input"][1]])
+        if exc['type'] == 'biosphere':
+            acts[id_mapping[act.key[1]]]['biosphere'].append(id_mapping[exc["input"][1]])
+
+        acts[id_mapping[act.key[1]]]['inputs'].append(id_mapping[exc["input"][1]])
+        acts[id_mapping[exc["input"][1]]]['outputs'].append(id_mapping[act.key[1]])
 
 del biodb
 del eidb
@@ -103,7 +110,8 @@ def get_activity_page():
         
         if skipped >= page_size * page_number:
             to_send = act.copy()
-            del to_send['exchanges']
+            del to_send['inputs']
+            del to_send['outputs']
             del to_send['classifications']
             collection.append(to_send)
             if len(collection) == page_size:
@@ -124,14 +132,19 @@ def get_node():
         "id": activity["id"],
         "name": activity["name"],
         "children": [],
-        "childCount": len(activity["exchanges"])
+        "childCount": len(activity["inputs"] + activity["biosphere"]),
+        "isAtBoundary": False
     }
-    for index in activity["exchanges"]:
+    for index in activity["inputs"] + activity['biosphere']:
         next_act = acts[index]
+        is_at_boundary = False
+        if activity['activity type'] == 'market activity' and next_act['activity type'] != 'market activity':
+            is_at_boundary = True
         retval["children"].append({
             "id": next_act["id"],
             "name": next_act["name"],
-            "childCount": len(next_act["exchanges"])
+            "childCount": len(next_act["inputs"]) + len(next_act['biosphere']),
+            "isAtBoundary": is_at_boundary
         })
     
     return json.dumps(retval)
