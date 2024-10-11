@@ -64,13 +64,16 @@ for act in eidb:
         
         if exc['type'] == 'biosphere':
             acts[id_mapping[act.key[1]]]['biosphere'].append(id_mapping[exc["input"][1]])
-
-        acts[id_mapping[act.key[1]]]['inputs'].append(id_mapping[exc["input"][1]])
+        else:
+            acts[id_mapping[act.key[1]]]['inputs'].append(id_mapping[exc["input"][1]])
         acts[id_mapping[exc["input"][1]]]['outputs'].append(id_mapping[act.key[1]])
 
 del biodb
 del eidb
 del id_mapping
+
+def is_market(activity):
+    return activity['activity type'] == 'market activity' or activity['activity type'] == 'market group'
 
 app = Flask(__name__,
             static_url_path = '',
@@ -138,7 +141,7 @@ def get_node():
     for index in activity["inputs"] + activity['biosphere']:
         next_act = acts[index]
         is_at_boundary = False
-        if activity['activity type'] == 'market activity' and next_act['activity type'] != 'market activity':
+        if is_market(activity) and not is_market(next_act):
             is_at_boundary = True
         retval["children"].append({
             "id": next_act["id"],

@@ -103,10 +103,11 @@ function createFDTGraph(rootNode, viewbox) {
         .attr("height", height)
         .attr("viewBox", viewbox);
 
-    const gNode = svg.append("g")
     const gLink = svg.append("g")
         .attr("stroke", "#999")
         .attr("stroke-opacity", 0.6)
+
+    const gNode = svg.append("g")
 
     function update(event, source) {
 
@@ -121,10 +122,11 @@ function createFDTGraph(rootNode, viewbox) {
             .selectAll("line")
             .data(links, d => d.target.id)
 
-        const linkEnter = link.enter().append("line")
-        link = linkEnter.merge(link)
-
         link.exit().remove()
+
+        const linkEnter = link.enter().append("line")
+
+        link = linkEnter.merge(link)
 
         // Append nodes.
         let node = gNode
