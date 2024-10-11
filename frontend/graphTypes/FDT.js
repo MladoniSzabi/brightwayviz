@@ -35,24 +35,32 @@ function createFDTGraph(rootNode, viewbox) {
 
     function wrap(text, width) {
         text.each(function () {
-            var text = d3.select(this),
+            let text = d3.select(this),
                 words = text.text().split(/\s+/).reverse(),
                 word,
                 line = [],
-                lineNumber = 0,
                 lineHeight = 1.2, // ems
-                y = text.attr("y"),
                 dy = parseFloat(text.attr("dy") || 0),
-                tspan = text.text(null).append("tspan").attr("x", d => -(50 + d.data.childCount / 2) / 2).attr("y", y).attr("dy", dy + "em")
+                lines = [];
+            text.text(null).attr("x", 0).attr("y", 0)
             while (word = words.pop()) {
                 line.push(word)
-                tspan.text(line.join(" "))
                 if (line.join(" ").length > width) {
                     line.pop()
-                    tspan.text(line.join(" "))
+                    lines.push(line.join(" "))
                     line = [word]
-                    tspan = text.append("tspan").attr("x", d => -(50 + d.data.childCount / 2) / 2).attr("y", y).attr("dy", `${++lineNumber * lineHeight + dy}em`).text(word)
                 }
+            }
+
+            if (line.length > 0) {
+                lines.push(line.join(" "))
+            }
+
+            console.log(lines)
+
+            let start = -(lines.length - 1) / 2
+            for (let i = 0; i < lines.length; i += 1) {
+                text.append("tspan").attr("x", 0).attr("y", 0).attr("dy", `${(start + i) * lineHeight + dy}em`).text(lines[i])
             }
         })
     }
@@ -172,8 +180,9 @@ function createFDTGraph(rootNode, viewbox) {
 
         nodeEnter.append("text")
             .text(d => d.data.name)
-            .attr("x", d => -(50 + d.data.childCount / 2) / 2)
-            .attr("y", d => -(50 + d.data.childCount / 2) / 2)
+            .attr("alignment-baseline", "central")
+            .attr("dominant-baseline", "central")
+            .attr("text-anchor", "middle")
             .call(wrap, 10);
 
         node = nodeEnter.merge(node)
