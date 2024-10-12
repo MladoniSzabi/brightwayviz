@@ -2,6 +2,9 @@ var rootNode = null
 var viewbox = null
 var svg = null
 var isMouseDown = false
+var initialDistance = null
+var initialViewbox = null
+var initialPos = null
 
 async function expandNode(ev, data) {
     console.log(1)
@@ -16,61 +19,131 @@ async function expandNode(ev, data) {
     return json
 }
 
-function handleScroll(event) {
+function getDistance(event) {
+    // Calculate distance between two touch points
+    const [touch1, touch2] = event.touches;
+    const dx = touch1.pageX - touch2.pageX;
+    const dy = touch1.pageY - touch2.pageY;
+    return Math.sqrt(dx * dx + dy * dy);
+}
 
-    const SCROLL_FACTOR = 1.2
+function handleTouchEnd(ev) {
+    initialDistance = null
+    initialViewbox = null
+    initialPos = null
+}
 
+function handleTouchMove(ev) {
+    if (ev.touches.length === 1) {
+        ev.preventDefault()
+        const touch = ev.touches[0]
+        if (initialPos === null) {
+            initialPos = { x: touch.clientX, y: touch.clientY }
+            initialViewbox = viewbox
+        }
+        else {
+            panSvg({
+                x: initialPos.x - touch.clientX,
+                y: initialPos.y - touch.clientY
+            }, initialViewbox)
+        }
+    }
+    if (ev.touches.length === 2) {
+        ev.preventDefault();
+
+        const distance = getDistance(ev)
+        if (initialDistance === null) {
+            initialDistance = distance;
+            initialViewbox = viewbox
+        } else {
+            const zoomFactor = (initialDistance / distance);
+            console.log(zoomFactor)
+            const [touch1, touch2] = ev.touches;
+            const center = {
+                x: (touch1.clientX + touch2.clientX) / 2,
+                y: (touch1.clientY + touch2.clientY) / 2
+            }
+
+            zoomSvg(zoomFactor, center, initialViewbox)
+        }
+    }
+}
+
+function panSvg(distance, initialViewbox = null) {
     const svgEl = svg.node()
     const svgPos = svgEl.getBoundingClientRect()
-    const deltaRel = event.deltaY / 138 * SCROLL_FACTOR
-    const factor = deltaRel < 0 ? 1 / -deltaRel : deltaRel
     const svgWidth = svgPos.right - svgPos.left
     const svgHeight = svgPos.bottom - svgPos.top
-    const relx = (event.clientX - svgPos.left) / svgWidth
-    const rely = (event.clientY - svgPos.top) / svgHeight
-    let newbox;
+    const relx = distance.x / svgWidth
+    const rely = distance.y / svgHeight
+
+    if (initialViewbox === null) {
+        initialViewbox = viewbox
+    }
+
+    const newBox = [
+        initialViewbox[0] + relx * initialViewbox[2],
+        initialViewbox[1] + rely * initialViewbox[3],
+        initialViewbox[2],
+        initialViewbox[3]
+    ]
+
+    viewbox = newBox
+    svg.attr("viewBox", viewbox)
+}
+
+function zoomSvg(factor, center, oldViewbox = null) {
+    const svgEl = svg.node()
+    const svgPos = svgEl.getBoundingClientRect()
+    const svgWidth = svgPos.right - svgPos.left
+    const svgHeight = svgPos.bottom - svgPos.top
+    const relx = (center.x - svgPos.left) / svgWidth
+    const rely = (center.y - svgPos.top) / svgHeight
+
+    if (oldViewbox === null) {
+        oldViewbox = viewbox
+    }
 
     if (factor > 1) {
         // zooming out
         newBox = [
-            viewbox[0] + relx * viewbox[2] * (1 - factor),
-            viewbox[1] + rely * viewbox[3] * (1 - factor),
-            viewbox[2] * factor,
-            viewbox[3] * factor
+            oldViewbox[0] + relx * oldViewbox[2] * (1 - factor),
+            oldViewbox[1] + rely * oldViewbox[3] * (1 - factor),
+            oldViewbox[2] * factor,
+            oldViewbox[3] * factor
         ]
     } else {
         // zooming in
         newBox = [
-            viewbox[0] + relx * viewbox[2] * (1 - factor),
-            viewbox[1] + rely * viewbox[3] * (1 - factor),
-            viewbox[2] * factor,
-            viewbox[3] * factor
+            oldViewbox[0] + relx * oldViewbox[2] * (1 - factor),
+            oldViewbox[1] + rely * oldViewbox[3] * (1 - factor),
+            oldViewbox[2] * factor,
+            oldViewbox[3] * factor
         ]
     }
     viewbox = newBox
     svg.attr("viewBox", viewbox)
+}
+
+function handleScroll(event) {
+
+    const SCROLL_FACTOR = 1.2
+
+    const deltaRel = event.deltaY / 138 * SCROLL_FACTOR
+    const factor = deltaRel < 0 ? 1 / -deltaRel : deltaRel
+
+    zoomSvg(factor, { x: event.clientX, y: event.clientY })
+
     event.preventDefault()
     event.stopPropagation()
 }
 
 function handleMouseMove(event) {
     if (isMouseDown) {
-        const svgEl = svg.node()
-        const svgPos = svgEl.getBoundingClientRect()
-        const svgWidth = svgPos.right - svgPos.left
-        const svgHeight = svgPos.bottom - svgPos.top
-        const relx = -event.movementX / svgWidth
-        const rely = -event.movementY / svgHeight
-
-        const newBox = [
-            viewbox[0] + relx * viewbox[2],
-            viewbox[1] + rely * viewbox[3],
-            viewbox[2],
-            viewbox[3]
-        ]
-
-        viewbox = newBox
-        svg.attr("viewBox", viewbox)
+        panSvg({
+            x: -event.movementX,
+            y: -event.movementY
+        })
     }
 
 }
@@ -116,6 +189,8 @@ function createGraph() {
     svgNode.addEventListener("mousemove", handleMouseMove)
     svgNode.addEventListener("mousedown", handleMouseDown)
     svgNode.addEventListener("mouseup", handleMouseUp)
+    svgNode.addEventListener("touchmove", handleTouchMove);
+    svgNode.addEventListener("touchend", handleTouchEnd)
 
     return svgNode
 }
