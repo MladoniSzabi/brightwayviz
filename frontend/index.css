@@ -106,6 +106,12 @@ tbody td {
     margin-bottom: 0.5em;
 }
 
+#graph-container>div {
+    position: relative;
+    width: min-content;
+    margin: auto;
+}
+
 svg {
     width: auto;
     height: 90vh;
@@ -113,6 +119,7 @@ svg {
     margin: auto;
     border: solid 1px grey;
     border-radius: 5px;
+    max-width: 85vw;
 }
 
 svg text {
@@ -120,4 +127,31 @@ svg text {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+span.zoom {
+    position: absolute;
+    font-size: 2.3em;
+    right: 1.2em;
+    border: solid 2px gray;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
+
+}
+
+.zoom-in {
+    top: 1.2em;
+}
+
+.zoom-out {
+    top: 2.6em
 }

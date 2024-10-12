@@ -202,7 +202,7 @@ async function drawActivity(e) {
     const activityContainer = document.getElementById("activities")
     activityContainer.style.maxHeight = null
 
-    const graphContainer = document.getElementById("graph-container")
+    const graphContainer = document.getElementById("graph-container").children[0]
     graphContainer.innerHTML = ""
     const activity = e.detail
 
@@ -211,6 +211,38 @@ async function drawActivity(e) {
     rootNode = node
     const svgNode = createGraph()
     graphContainer.appendChild(svgNode)
+    const zoomIn = document.createElement("span")
+    zoomIn.classList.add("zoom-in")
+    zoomIn.classList.add("zoom")
+    zoomIn.classList.add("material-symbols-outlined")
+    zoomIn.innerHTML = "zoom_in"
+    graphContainer.appendChild(zoomIn)
+    const zoomOut = document.createElement("span")
+    zoomOut.classList.add("zoom-out")
+    zoomOut.classList.add("zoom")
+    zoomOut.classList.add("material-symbols-outlined")
+    zoomOut.innerHTML = "zoom_out"
+    graphContainer.appendChild(zoomOut)
+
+    zoomIn.addEventListener('click', () => {
+        const svgPos = svgNode.getBoundingClientRect()
+        const svgWidth = svgPos.right - svgPos.left
+        const svgHeight = svgPos.bottom - svgPos.top
+        zoomSvg(0.8, {
+            x: svgWidth / 2,
+            y: svgHeight / 2
+        })
+    })
+
+    zoomOut.addEventListener('click', () => {
+        const svgPos = svgNode.getBoundingClientRect()
+        const svgWidth = svgPos.right - svgPos.left
+        const svgHeight = svgPos.bottom - svgPos.top
+        zoomSvg(1.2, {
+            x: svgWidth / 2,
+            y: svgHeight / 2
+        })
+    })
 }
 
 document.addEventListener("DOMContentLoaded", () => {
