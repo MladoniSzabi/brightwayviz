@@ -109,9 +109,8 @@ function drag(simulation) {
 }
 
 function createGraph() {
-    svg = createFDTGraph(rootNode, svg, viewbox)
+    svg = createFDTGraph(rootNode, viewbox)
     viewbox = svg.attr("viewBox").split(",").map((el) => Number(el))
-    console.log(viewbox)
     const svgNode = svg.node()
     svgNode.addEventListener("wheel", handleScroll)
     svgNode.addEventListener("mousemove", handleMouseMove)

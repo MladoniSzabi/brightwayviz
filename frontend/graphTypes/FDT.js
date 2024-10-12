@@ -56,8 +56,6 @@ function createFDTGraph(rootNode, viewbox) {
                 lines.push(line.join(" "))
             }
 
-            console.log(lines)
-
             let start = -(lines.length - 1) / 2
             for (let i = 0; i < lines.length; i += 1) {
                 text.append("tspan").attr("x", 0).attr("y", 0).attr("dy", `${(start + i) * lineHeight + dy}em`).text(lines[i])
