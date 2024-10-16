@@ -1,5 +1,6 @@
 import os
 import json
+import gzip
 
 import brightway2 as bw
 import bw2data as bd
@@ -7,7 +8,14 @@ import bw2io as bi
 import bw2calc as bc
 import bw2analyzer as bwa
 
-from flask import Flask, request, send_from_directory
+from flask import Flask, request, send_from_directory, make_response
+
+ENVIRONMENT = os.environ.get("ENVIRONMENT", "DEV")
+
+if ENVIRONMENT == "PROD":
+    with open("frontend/index.html") as f:
+        content = gzip.compress(f.read(), 9)
+    print("Compressed index.html: ", len(content))
 
 PROJECT_NAME = 'ecoinvent-3-10-lci-2'
 bd.projects.set_current(PROJECT_NAME)
@@ -20,6 +28,8 @@ biodb = bd.Database(BIODB_NAME)
 
 acts = []
 id_mapping = {}
+
+print("Loading processing activities...")
 
 for index, act in enumerate(eidb):
     actdict = act.as_dict()
@@ -38,6 +48,8 @@ for index, act in enumerate(eidb):
     })
     id_mapping[act.key[1]] = index
 
+print("Loading biosphere activities...")
+
 for index, act in enumerate(biodb):
     actdict = act.as_dict()
     #print(actdict.keys())
@@ -55,6 +67,8 @@ for index, act in enumerate(biodb):
         "outputs": []
     })
     id_mapping[act.key[1]] = index
+
+print("Loading exchanges...")
 
 for act in eidb:
     for exc in act.exchanges():
@@ -75,26 +89,46 @@ del id_mapping
 def is_market(activity):
     return activity['activity type'] == 'market activity' or activity['activity type'] == 'market group'
 
+print("Starting server...")
+
 app = Flask(__name__,
             static_url_path = '',
             static_folder='frontend')
 
 @app.route("/", methods=["GET"])
 def index():
+    if ENVIRONMENT == "PROD":
+        response = make_response(content)
+        response.headers['Content-length'] = len(content)
+        response.headers['Content-encoding'] = 'gzip'
+        return response
     return send_from_directory("frontend", "index.html")
 
 @app.route("/api/activity/total", methods=["GET"])
 def get_activity_count():
     search_criteria = request.args.get("search", "")
-    print(search_criteria)
-    if search_criteria == "":
-        print("ASD")
+    filters_key = request.args.get("filters_key", [])
+    filters_value = request.args.get("filters_value", [])
+
+    if len(filters_key) != len(filters_value):
+        return "0"
+
+    if search_criteria == "" and filters_key == []:
         return str(len(acts))
     
     count = 0
     for act in acts:
-        if search_criteria in act['name']:
-            count += 1
+        if search_criteria not in act['name']:
+            continue
+
+        for key, value in zip(filters_key, filters_value):
+            if key[:2] == "__":
+                continue
+            
+            if value not in act[key]:
+                continue
+
+        count += 1
     return str(count)
 
 @app.route("/api/activity", methods=["GET"])
@@ -102,6 +136,11 @@ def get_activity_page():
     search_criteria = request.args.get("search", "")
     page_number = int(request.args.get("page", 0))
     page_size = min(int(request.args.get("count", 0)), 50)
+    filters_key = request.args.get("filters_key", [])
+    filters_value = request.args.get("filters_value", [])
+
+    if len(filters_key) != len(filters_value):
+        return ""
 
     collection = []
     skipped = 0
@@ -110,6 +149,13 @@ def get_activity_page():
     for act in acts:
         if search_criteria not in act['name']:
             continue
+        
+        for key, value in zip(filters_key, filters_value):
+            if key[:2] == "__":
+                continue
+            
+            if value not in act[key]:
+                continue
         
         if skipped >= page_size * page_number:
             to_send = act.copy()
@@ -152,4 +198,7 @@ def get_node():
     
     return json.dumps(retval)
 
-app.run(host="0.0.0.0")
+if ENVIRONMENT == "PROD":
+    app.run(host='0.0.0.0')
+else:
+    app.run()
