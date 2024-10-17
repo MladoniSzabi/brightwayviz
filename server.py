@@ -14,10 +14,10 @@ ENVIRONMENT = os.environ.get("ENVIRONMENT", "DEV")
 
 if ENVIRONMENT == "PROD":
     with open("frontend/index.html") as f:
-        content = gzip.compress(f.read(), 9)
+        content = gzip.compress(f.read().encode('utf-8'), 9)
     print("Compressed index.html: ", len(content))
 
-PROJECT_NAME = 'ecoinvent-3-10-lci-2'
+PROJECT_NAME = 'ecoinvent-3.10-cutoff-try-3'
 bd.projects.set_current(PROJECT_NAME)
 
 DB_NAME="ecoinvent-3.10-cutoff"
@@ -44,7 +44,10 @@ for index, act in enumerate(eidb):
         "product": actdict["reference product"],
         "inputs" : [],
         "biosphere": [],
-        "outputs": []
+        "outputs": [],
+        "time-period": actdict["time period"],
+        "section": actdict["section"],
+        "sector": actdict["sector"]
     })
     id_mapping[act.key[1]] = index
 
@@ -64,7 +67,10 @@ for index, act in enumerate(biodb):
         "product": actdict["name"],
         "inputs" : [],
         "biosphere": [],
-        "outputs": []
+        "outputs": [],
+        "time-period": [],
+        "section": "",
+        "sector": []
     })
     id_mapping[act.key[1]] = index
 
@@ -89,6 +95,66 @@ del id_mapping
 def is_market(activity):
     return activity['activity type'] == 'market activity' or activity['activity type'] == 'market group'
 
+def get_filters():
+    return {
+        'search_criteria': request.args.get("search", ""),
+        'time_period_start': request.args.get("time-period-start", None),
+        'time_period_end': request.args.get("time-period-end", None),
+        'sector': request.args.get("sector", ""),
+        'geography': request.args.get("geography", ""),
+        'activity_type': request.args.get("activity-type", ""),
+        'isic_section': request.args.get("isic-section", ""),
+        'isic_class': request.args.get("isic-class", ""),
+        'cpc_class': request.args.get("cpc-class", ""),
+    }
+
+def matches_filter(activity, filters):
+    if filters['search_criteria'] not in activity['name'] or filters['search_criteria'] not in activity['product']:
+        return False
+
+    if filters["time_period_start"] != None and int(filters["time_period_start"]) > activity["time period"][0]:
+        return False
+
+    if filters["time_period_end"] != None and int(filters["time_period_end"]) < activity["time period"][-1]:
+        return False
+
+    contained_in_sector = False
+    for sector in activity['sector']:
+        if filters["sector"] in sector:
+            contained_in_sector = True
+            break
+    
+    if not contained_in_sector:
+        return False
+
+    if filters["geography"] not in activity["location"]:
+        return False
+
+    if filters["activity_type"] not in activity["activity type"]:
+        return False
+
+    if filters["isic_section"] not in activity["section"]:
+        return False
+
+    is_part_of_isic_class = False
+    is_part_of_cpc_class = False
+    for classification_method, value in activity["classifications"]:
+        if "ISIC" in classification_method:
+            if filters["isic_class"] in value:
+                is_part_of_isic_class = True
+
+        if "CPC" in classification_method:
+            if filters["cpc_class"] in value:
+                is_part_of_cpc_class = True
+    
+    if not is_part_of_isic_class:
+        return False
+
+    if not is_part_of_cpc_class:
+        return False
+
+    return True
+
 print("Starting server...")
 
 app = Flask(__name__,
@@ -106,62 +172,48 @@ def index():
 
 @app.route("/api/activity/total", methods=["GET"])
 def get_activity_count():
-    search_criteria = request.args.get("search", "")
-    filters_key = request.args.get("filters_key", [])
-    filters_value = request.args.get("filters_value", [])
+    filters = get_filters()
 
-    if len(filters_key) != len(filters_value):
-        return "0"
+    if filters["search_criteria"] == "" and \
+        filters["time_period_start"] == None and \
+        filters["time_period_end"] == None and \
+        filters["sector"] == "" and \
+        filters["geography"] == "" and \
+        filters["activity_type"] == "" and \
+        filters["isic_section"] == "" and \
+        filters["isic_class"] == "" and \
+        filters["cpc_class"] == "":
 
-    if search_criteria == "" and filters_key == []:
         return str(len(acts))
     
     count = 0
     for act in acts:
-        if search_criteria not in act['name']:
+        if not matches_filter(act, filters):
             continue
-
-        for key, value in zip(filters_key, filters_value):
-            if key[:2] == "__":
-                continue
-            
-            if value not in act[key]:
-                continue
 
         count += 1
     return str(count)
 
+DESIRED_KEYS = ["id", "name", "location", "type", "unit", "product"]
+
 @app.route("/api/activity", methods=["GET"])
 def get_activity_page():
-    search_criteria = request.args.get("search", "")
+    filters = get_filters()
+
     page_number = int(request.args.get("page", 0))
     page_size = min(int(request.args.get("count", 0)), 50)
-    filters_key = request.args.get("filters_key", [])
-    filters_value = request.args.get("filters_value", [])
-
-    if len(filters_key) != len(filters_value):
-        return ""
 
     collection = []
     skipped = 0
 
     curr_page = 0
     for act in acts:
-        if search_criteria not in act['name']:
+        if not matches_filter(act, filters):
             continue
         
-        for key, value in zip(filters_key, filters_value):
-            if key[:2] == "__":
-                continue
-            
-            if value not in act[key]:
-                continue
-        
         if skipped >= page_size * page_number:
-            to_send = act.copy()
-            del to_send['inputs']
-            del to_send['outputs']
-            del to_send['classifications']
+            to_send = {k: v for k, v in act.items() if k in DESIRED_KEYS}
+
             collection.append(to_send)
             if len(collection) == page_size:
                 break
@@ -169,7 +221,7 @@ def get_activity_page():
             skipped += 1
     
     if len(collection) == 0:
-        return ""
+        return "[]"
     
     return json.dumps(collection)
 
@@ -199,6 +251,6 @@ def get_node():
     return json.dumps(retval)
 
 if ENVIRONMENT == "PROD":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True, use_evalex=True)
 else:
     app.run()

@@ -1,15 +1,61 @@
 var ItemsPerPage = 5
 var CurrentPage = 0
 var TotalItems = 0
-var SearchTerm = ""
 
 function sanitizeString(str) {
-    str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim, "");
+    str = str.replace(/[^a-z0-9áéíóúñü&:() \.,_-]/gim, "");
     return str.trim();
 }
 
+function getFilters() {
+    timePeriodStart = document.getElementById("time-period-start")
+    timePeriodEnd = document.getElementById("time-period-end")
+    sector = document.getElementById("sector")
+    geography = document.getElementById("geography")
+    activityType = document.getElementById("activity-type")
+    isicSection = document.getElementById("isic-section")
+    isicClass = document.getElementById("isic-class")
+    cpcClass = document.getElementById("cpc-class")
+    searchTerm = document.getElementById("search")
+
+    form = new FormData();
+
+    if (timePeriodStart.value) {
+        form.append("time-period-start", sanitizeString(timePeriodStart.value))
+    }
+    if (timePeriodEnd.value) {
+        form.append("time-period-end", sanitizeString(timePeriodEnd.value))
+    }
+    if (sector.value) {
+        form.append("sector", sanitizeString(sector.value))
+    }
+    if (geography.value) {
+        form.append("geography", sanitizeString(geography.value))
+    }
+    if (activityType.value) {
+        form.append("activity-type", sanitizeString(activityType.value))
+    }
+    if (isicSection.value) {
+        form.append("isic-section", sanitizeString(isicSection.value))
+    }
+    if (isicClass.value) {
+        form.append("isic-class", sanitizeString(isicClass.value))
+    }
+    if (cpcClass.value) {
+        form.append("cpc-class", sanitizeString(cpcClass.value))
+    }
+
+    if (searchTerm.value) {
+        form.append("search", sanitizeString(searchTerm.value))
+    }
+
+    return form
+}
+
 async function getItemCount() {
-    let response = await fetch(`/api/activity/total?search=${sanitizeString(SearchTerm)}`)
+    let form = getFilters()
+    let urlParams = new URLSearchParams(form)
+    let response = await fetch(`/api/activity/total?${urlParams.toString()}`)
     if (response.status != 200) {
         // error
     }
@@ -18,7 +64,11 @@ async function getItemCount() {
 }
 
 async function getPage(pageNumber, itemsPerPage) {
-    let response = await fetch(`/api/activity?page=${pageNumber}&count=${itemsPerPage}&search=${sanitizeString(SearchTerm)}`)
+    let form = getFilters()
+    form.append('page', pageNumber)
+    form.append('count', itemsPerPage)
+    let urlParams = new URLSearchParams(form)
+    let response = await fetch(`/api/activity?${urlParams.toString()}`)
     if (response.status != 200) {
         // error
     }
@@ -117,27 +167,33 @@ function setUpPaginationPageSelect(pages) {
 function loadActivities(currPage) {
     CurrentPage = currPage
     getItemCount().then((itemCount) => {
-        console.log("Getting item count")
         document.getElementById("result-count").innerHTML = String(itemCount) + " total results"
         let pageCount = Math.ceil(itemCount / ItemsPerPage)
         setUpPaginationPageSelect(pageCount)
     })
 
     getPage(currPage, ItemsPerPage).then((activities) => {
-        console.log("Getting items")
         populateTable(activities)
     })
 }
 
-function searchTermChanged(ev) {
-    SearchTerm = ev.target.value
+function searchChanged(ev) {
+    console.log(1)
     let container = document.getElementById("page-content")
     container.innerHTML = ""
     loadActivities(0)
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    SearchTerm = document.getElementById("search").value
     loadActivities(0)
-    document.getElementById("search").addEventListener("keyup", searchTermChanged)
+    document.getElementById("search").addEventListener("input", searchChanged)
+    document.getElementById("time-period-start").addEventListener("input", searchChanged)
+    document.getElementById("time-period-end").addEventListener("input", searchChanged)
+    document.getElementById("sector").addEventListener("input", searchChanged)
+    document.getElementById("geography").addEventListener("input", searchChanged)
+    document.getElementById("activity-type").addEventListener("input", searchChanged)
+    document.getElementById("isic-section").addEventListener("input", searchChanged)
+    document.getElementById("isic-class").addEventListener("input", searchChanged)
+    document.getElementById("cpc-class").addEventListener("input", searchChanged)
+    document.getElementById("search").addEventListener("input", searchChanged)
 })
