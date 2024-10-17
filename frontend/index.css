@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 body>* {
     width: 85vw;
     margin: auto;
@@ -110,6 +115,7 @@ tbody td {
     position: relative;
     width: min-content;
     margin: auto;
+    overflow: hidden;
 }
 
 svg {
@@ -132,7 +138,7 @@ svg text {
 span.zoom {
     position: absolute;
     font-size: 2.3em;
-    right: 1.2em;
+    left: 1.2em;
     border: solid 2px gray;
     border-radius: 5px;
     background: white;
@@ -145,13 +151,42 @@ span.zoom {
     /* IE10+/Edge */
     user-select: none;
     /* Standard */
+    display: none;
 
 }
 
-.zoom-in {
+#zoom-in {
     top: 1.2em;
 }
 
-.zoom-out {
+#zoom-out {
     top: 2.6em
+}
+
+#svg-container {
+    line-height: 0;
+}
+
+#side-panel {
+    width: 40em;
+    left: 100%;
+    height: calc(100% - 2px);
+    background-color: rgba(226, 226, 226, 0.932);
+    border: solid 1px grey;
+    border-radius: 5px;
+    position: absolute;
+    top: 0;
+
+    transition: left 0.3s;
+}
+
+#side-panel.open {
+    left: calc(100% - 40em - 2px);
+}
+
+#close-button {
+    display: flex;
+    justify-content: flex-end;
+    user-select: none;
+    cursor: pointer;
 }

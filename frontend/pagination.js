@@ -84,7 +84,7 @@ function populateTable(data) {
         cells = {}
         for (let key in activity) {
             cells[key] = document.createElement("td")
-            cells[key].innerHTML = sanitizeString(String(activity[key]))
+            cells[key].textContent = sanitizeString(String(activity[key]))
         }
 
         row.appendChild(cells["name"])
@@ -95,7 +95,7 @@ function populateTable(data) {
         row.appendChild(cells["type"])
 
         let showButton = document.createElement("a")
-        showButton.innerHTML = "Show"
+        showButton.textContent = "Show"
         const DrawActivityEvent = new CustomEvent("draw-activity", { detail: activity })
         showButton.onclick = () => {
             container.dispatchEvent(DrawActivityEvent)
@@ -114,7 +114,7 @@ function setUpPaginationPageSelect(pages) {
     let container = document.getElementById("pagination-page-select")
     container.innerHTML = ""
     let prevArrow = document.createElement("button")
-    prevArrow.innerHTML = "<"
+    prevArrow.textContent = "<"
     if (CurrentPage <= 0) {
         prevArrow.disabled = true
     } else {
@@ -128,7 +128,7 @@ function setUpPaginationPageSelect(pages) {
     container.appendChild(prevArrow)
 
     let nextArrow = document.createElement("button")
-    nextArrow.innerHTML = ">"
+    nextArrow.textContent = ">"
     let pageCount = Math.ceil(TotalItems / ItemsPerPage)
     if (CurrentPage >= pageCount - 1) {
         nextArrow.disabled = true
@@ -144,20 +144,20 @@ function setUpPaginationPageSelect(pages) {
 
     if (CurrentPage > 3) {
         let ellipses = document.createElement("p")
-        ellipses.innerHTML = "..."
+        ellipses.textContent = "..."
         container.appendChild(ellipses)
     }
 
     for (let i = Math.max(CurrentPage - 2, 0); i < Math.min(CurrentPage + 2, pageCount - 1); i++) {
         let button = document.createElement("button")
-        button.innerHTML = String(i + 1)
+        button.textContent = String(i + 1)
         button.onclick = () => { loadActivities(i) }
         container.appendChild(button)
     }
 
     if (CurrentPage < pageCount - 4) {
         let ellipses = document.createElement("p")
-        ellipses.innerHTML = "..."
+        ellipses.textContent = "..."
         container.appendChild(ellipses)
     }
 
@@ -167,7 +167,7 @@ function setUpPaginationPageSelect(pages) {
 function loadActivities(currPage) {
     CurrentPage = currPage
     getItemCount().then((itemCount) => {
-        document.getElementById("result-count").innerHTML = String(itemCount) + " total results"
+        document.getElementById("result-count").textContent = String(itemCount) + " total results"
         let pageCount = Math.ceil(itemCount / ItemsPerPage)
         setUpPaginationPageSelect(pageCount)
     })

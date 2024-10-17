@@ -35,6 +35,8 @@ for index, act in enumerate(eidb):
     actdict = act.as_dict()
     acts.append({
         "id": len(acts),
+        "activity uuid": actdict["activity"],
+        "product uuid": actdict["flow"],
         "name": actdict["name"],
         "classifications": actdict["classifications"],
         "activity type": actdict["activity type"],
@@ -47,7 +49,7 @@ for index, act in enumerate(eidb):
         "outputs": [],
         "time-period": actdict["time period"],
         "section": actdict["section"],
-        "sector": actdict["sector"]
+        "sectors": actdict["sector"]
     })
     id_mapping[act.key[1]] = index
 
@@ -59,6 +61,8 @@ for index, act in enumerate(biodb):
     acts.append({
         "id": len(acts),
         "name": actdict["name"],
+        "activity uuid": actdict["code"],
+        "product uuid": actdict["CAS number"],
         "classifications": actdict["categories"],
         "activity type": "biosphere",
         "location": "",
@@ -70,7 +74,7 @@ for index, act in enumerate(biodb):
         "outputs": [],
         "time-period": [],
         "section": "",
-        "sector": []
+        "sectors": []
     })
     id_mapping[act.key[1]] = index
 
@@ -119,7 +123,7 @@ def matches_filter(activity, filters):
         return False
 
     contained_in_sector = False
-    for sector in activity['sector']:
+    for sector in activity['sectors']:
         if filters["sector"] in sector:
             contained_in_sector = True
             break
@@ -225,6 +229,11 @@ def get_activity_page():
     
     return json.dumps(collection)
 
+@app.route("/api/activity/<int:activity_id>", methods=["GET"])
+def get_activity(activity_id):
+    return json.dumps(acts[activity_id])
+
+
 @app.route("/api/node", methods=["GET"])
 def get_node():
     act_id = int(request.args.get("id"))
@@ -251,6 +260,6 @@ def get_node():
     return json.dumps(retval)
 
 if ENVIRONMENT == "PROD":
-    app.run(host='0.0.0.0', debug=True, use_evalex=True)
+    app.run(host='0.0.0.0')
 else:
-    app.run()
+    app.run(debug=True, use_evalex=True)

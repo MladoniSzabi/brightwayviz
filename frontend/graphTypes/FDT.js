@@ -23,6 +23,47 @@ drag = simulation => {
         .on("end", dragended);
 }
 
+function capitalise(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+function showSidePanel(data) {
+    console.log(data)
+
+    sidePanel = document.getElementById("side-panel")
+    sidePanel.classList.add("open")
+
+    fetch("/api/activity/" + String(data.id))
+        .then((response) => response.json())
+        .then((data) => {
+            document.getElementById("side-panel-title").textContent = capitalise(data.name)
+            document.getElementById("side-panel-activity-uuid").textContent = data['activity uuid'].toUpperCase()
+            document.getElementById("side-panel-product-uuid").textContent = data['product uuid'].toUpperCase()
+            document.getElementById("side-panel-product").textContent = data.product
+            document.getElementById("side-panel-section").textContent = data.section
+            document.getElementById("side-panel-sectors").textContent = data.sectors.join("; ")
+            document.getElementById("side-panel-geography").textContent = data.location
+            document.getElementById("side-panel-unit").textContent = data.unit
+            document.getElementById("side-panel-activity-type").textContent = data['activity type']
+            document.getElementById("side-panel-time-period").textContent = String(data['time-period'].start) + " - " + String(data['time-period'].finish)
+            document.getElementById("side-panel-type").textContent = data['type']
+            document.getElementById("side-panel-classification-isic").textContent = "None"
+            document.getElementById("side-panel-classification-cpc").textContent = "None"
+            document.getElementById("side-panel-classification-other").textContent = "None"
+
+            for (const classificationArray of data.classifications) {
+                if (classificationArray[0].includes("ISIC")) {
+                    document.getElementById("side-panel-classification-isic").textContent = classificationArray[1]
+                } else if (classificationArray[0].includes("CPC")) {
+                    document.getElementById("side-panel-classification-cpc").textContent = classificationArray[1]
+                } else {
+                    document.getElementById("side-panel-classification-other").textContent = classificationArray[1]
+                }
+            }
+
+        })
+}
+
 function generateColor() {
     const hue = Math.floor(Math.random() * 360)
     const sat = Math.floor(Math.random() * 50 + 50)
@@ -162,7 +203,6 @@ function createFDTGraph(rootNode, viewbox) {
                             ins.children[i]['color'] = d.color
                         }
                     }
-                    console.log(d, ins)
                     d.children = ins.children;
                     d._children = ins.children
                     d.data = newNode
@@ -170,6 +210,10 @@ function createFDTGraph(rootNode, viewbox) {
                     update(event, d);
                 })
             }
+        })
+
+        nodeEnter.on('click', (event, d) => {
+            showSidePanel(d.data)
         })
 
         nodeEnter.append("circle")

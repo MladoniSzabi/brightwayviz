@@ -4,8 +4,7 @@
 <head>
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=zoom_in,zoom_out" />
-
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=close,zoom_in,zoom_out" />
     <script src="d3.js"></script>
     <script src="graphTypes/tidyTree.js"></script>
     <script src="graphTypes/FDT.js"></script>
@@ -69,7 +68,36 @@
     </div>
 
     <div id="graph-container">
-        <div></div>
+        <div>
+            <div id="svg-container"></div>
+            <span id="zoom-in" class="zoom material-symbols-outlined">zoom_in</span>
+            <span id="zoom-out" class="zoom-out zoom material-symbols-outlined">zoom_out</span>
+            <div id="side-panel">
+                <span id="close-button" class="material-symbols-outlined">
+                    close
+                </span>
+                <h2 id="side-panel-title"></h2>
+                <div id="side-panel-data">
+                    <p>Activity UUID: <span id="side-panel-activity-uuid"></span></p>
+                    <p>Product UUID: <span id="side-panel-product-uuid"></span></p>
+                    <hr />
+                    <p>Product: <span id="side-panel-product"></span></p>
+                    <p>Section: <span id="side-panel-section"></span></p>
+                    <p>Sectors: <span id="side-panel-sectors"></span></p>
+                    <hr />
+                    <p>ISIC Classification: <span id="side-panel-classification-isic"></span></p>
+                    <p>CPC Classification: <span id="side-panel-classification-cpc"></span></p>
+                    <p>Other Classifications: <span id="side-panel-classification-other"></span></p>
+                    <hr />
+                    <p>Location: <span id="side-panel-geography"></span></p>
+                    <p>Time Period: <span id="side-panel-time-period"></span></p>
+                    <p>Unit: <span id="side-panel-unit"></span></p>
+                    <hr />
+                    <p>Activity Type: <span id="side-panel-activity-type"></span></p>
+                    <p>Type: <span id="side-panel-type"></span></p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <datalist id="time-period">
