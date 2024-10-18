@@ -25,6 +25,7 @@
                         <th>Unit</th>
                         <th>Geography</th>
                         <th>Activity Type</th>
+                        <th>Organisations</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -64,6 +65,7 @@
             <input placeholder="ISIC Section" id="isic-section" list="sections" />
             <input placeholder="ISIC Classification" id="isic-class" list="ISIC Classifications" />
             <input placeholder="CPC Classification" id="cpc-class" list="CPC Classifications" />
+            <input placeholder="Organisation" id="organisation-filter" type="number" min="0" />
         </div>
     </div>
 
@@ -78,23 +80,23 @@
                 </span>
                 <h2 id="side-panel-title"></h2>
                 <div id="side-panel-data">
-                    <p>Activity UUID: <span id="side-panel-activity-uuid"></span></p>
-                    <p>Product UUID: <span id="side-panel-product-uuid"></span></p>
-                    <hr />
-                    <p>Product: <span id="side-panel-product"></span></p>
-                    <p>Section: <span id="side-panel-section"></span></p>
-                    <p>Sectors: <span id="side-panel-sectors"></span></p>
-                    <hr />
-                    <p>ISIC Classification: <span id="side-panel-classification-isic"></span></p>
-                    <p>CPC Classification: <span id="side-panel-classification-cpc"></span></p>
-                    <p>Other Classifications: <span id="side-panel-classification-other"></span></p>
-                    <hr />
-                    <p>Location: <span id="side-panel-geography"></span></p>
-                    <p>Time Period: <span id="side-panel-time-period"></span></p>
-                    <p>Unit: <span id="side-panel-unit"></span></p>
-                    <hr />
-                    <p>Activity Type: <span id="side-panel-activity-type"></span></p>
-                    <p>Type: <span id="side-panel-type"></span></p>
+                    <span>Activity UUID: </span><span id="side-panel-activity-uuid"></span>
+                    <span>Product UUID: </span><span id="side-panel-product-uuid"></span>
+                    <span class="side-panel-gap"></span>
+                    <span>Product: </span><span id="side-panel-product"></span>
+                    <span>Section: </span><span id="side-panel-section"></span>
+                    <span>Sectors: </span><span id="side-panel-sectors"></span>
+                    <span class="side-panel-gap"></span>
+                    <span>ISIC Classification: </span><span id="side-panel-classification-isic"></span>
+                    <span>CPC Classification: </span><span id="side-panel-classification-cpc"></span>
+                    <span>Other Classifications: </span><span id="side-panel-classification-other"></span>
+                    <span class="side-panel-gap"></span>
+                    <span>Location: </span><span id="side-panel-geography"></span>
+                    <span>Time Period: </span><span id="side-panel-time-period"></span>
+                    <span>Unit: </span><span id="side-panel-unit"></span>
+                    <span class="side-panel-gap"></span>
+                    <span>Activity Type: </span><span id="side-panel-activity-type"></span>
+                    <span>Type: </span><span id="side-panel-type"></span>
                 </div>
             </div>
         </div>

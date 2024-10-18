@@ -12,7 +12,7 @@ function sfc32(a, b, c, d) {
 }
 
 const seedgen = () => (0) >>> 0;
-const getRand = sfc32(seedgen(), seedgen(), seedgen(), seedgen());
+var getRand = sfc32(seedgen(), seedgen(), seedgen(), seedgen());
 
 drag = simulation => {
 
@@ -89,6 +89,8 @@ function generateColor() {
 }
 
 function createFDTGraph(rootNode, viewbox) {
+
+    getRand = sfc32(seedgen(), seedgen(), seedgen(), seedgen());
 
     function wrap(text, width) {
         text.each(function () {

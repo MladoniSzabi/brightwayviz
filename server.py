@@ -28,6 +28,7 @@ biodb = bd.Database(BIODB_NAME)
 
 acts = []
 id_mapping = {}
+organisations = []
 
 print("Loading processing activities...")
 
@@ -49,7 +50,8 @@ for index, act in enumerate(eidb):
         "outputs": [],
         "time-period": actdict["time period"],
         "section": actdict["section"],
-        "sectors": actdict["sector"]
+        "sectors": actdict["sector"],
+        "organisations": actdict["organisations"]
     })
     id_mapping[act.key[1]] = index
 
@@ -57,7 +59,6 @@ print("Loading biosphere activities...")
 
 for index, act in enumerate(biodb):
     actdict = act.as_dict()
-    #print(actdict.keys())
     acts.append({
         "id": len(acts),
         "name": actdict["name"],
@@ -74,7 +75,8 @@ for index, act in enumerate(biodb):
         "outputs": [],
         "time-period": [],
         "section": "",
-        "sectors": []
+        "sectors": [],
+        "organisations": []
     })
     id_mapping[act.key[1]] = index
 
@@ -91,6 +93,18 @@ for act in eidb:
         else:
             acts[id_mapping[act.key[1]]]['inputs'].append(id_mapping[exc["input"][1]])
         acts[id_mapping[exc["input"][1]]]['outputs'].append(id_mapping[act.key[1]])
+
+print("Loading organisations...")
+with open("organisational_boundaries_smaller.txt") as f:
+    organisation = []
+    line = f.readline()
+    while line:
+        if line == "\n":
+            organisations.append(organisation)
+            organisation = []
+        else:
+            organisation.append(id_mapping[line.strip()])
+        line = f.readline()
 
 del biodb
 del eidb
@@ -110,6 +124,7 @@ def get_filters():
         'isic_section': request.args.get("isic-section", ""),
         'isic_class': request.args.get("isic-class", ""),
         'cpc_class': request.args.get("cpc-class", ""),
+        'organisation': int(request.args.get("organisation", -1))
     }
 
 def matches_filter(activity, filters):
@@ -157,6 +172,9 @@ def matches_filter(activity, filters):
     if not is_part_of_cpc_class:
         return False
 
+    if filters["organisation"] != -1 and filters["organisation"] not in activity["organisations"]:
+        return False
+
     return True
 
 print("Starting server...")
@@ -186,7 +204,8 @@ def get_activity_count():
         filters["activity_type"] == "" and \
         filters["isic_section"] == "" and \
         filters["isic_class"] == "" and \
-        filters["cpc_class"] == "":
+        filters["cpc_class"] == "" and \
+        filters["organisation"] == -1:
 
         return str(len(acts))
     
@@ -198,7 +217,7 @@ def get_activity_count():
         count += 1
     return str(count)
 
-DESIRED_KEYS = ["id", "name", "location", "type", "unit", "product"]
+DESIRED_KEYS = ["id", "name", "location", "type", "unit", "product", "organisations"]
 
 @app.route("/api/activity", methods=["GET"])
 def get_activity_page():
@@ -262,4 +281,4 @@ def get_node():
 if ENVIRONMENT == "PROD":
     app.run(host='0.0.0.0')
 else:
-    app.run(debug=True, use_evalex=True)
+    app.run()

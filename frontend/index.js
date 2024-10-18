@@ -128,7 +128,7 @@ function handleScroll(event) {
 
     const SCROLL_FACTOR = 1.2
 
-    const deltaRel = event.deltaY / 138 * SCROLL_FACTOR
+    const deltaRel = Math.sign(event.deltaY) * SCROLL_FACTOR
     const factor = deltaRel < 0 ? 1 / -deltaRel : deltaRel
 
     zoomSvg(factor, { x: event.clientX, y: event.clientY })
@@ -139,16 +139,25 @@ function handleScroll(event) {
 
 function handleMouseMove(event) {
     if (isMouseDown) {
+        console.log(event)
         panSvg({
             x: -event.movementX,
             y: -event.movementY
         })
+
+        event.stopPropagation()
+        event.preventDefault()
+        event.cancelBubble = true
+        event.returnValue = false
+        return false
     }
 
 }
 
 function handleMouseDown(event) {
     isMouseDown = true;
+    event.preventDefault()
+    return false
 }
 
 function handleMouseUp(event) {
@@ -210,9 +219,7 @@ function createGraph() {
     viewbox = svg.attr("viewBox").split(",").map((el) => Number(el))
     const svgNode = svg.node()
     svgNode.addEventListener("wheel", handleScroll)
-    svgNode.addEventListener("mousemove", handleMouseMove)
     svgNode.addEventListener("mousedown", handleMouseDown)
-    svgNode.addEventListener("mouseup", handleMouseUp)
     svgNode.addEventListener("touchmove", handleTouchMove);
     svgNode.addEventListener("touchend", handleTouchEnd)
 
@@ -262,4 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("zoom-out").addEventListener('click', handleZoomOutPressed)
 
     document.getElementById("close-button").addEventListener("click", closeSidePanel)
+
+    document.addEventListener("mouseup", handleMouseUp)
+    document.addEventListener("mousemove", handleMouseMove)
 })

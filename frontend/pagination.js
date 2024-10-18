@@ -17,6 +17,7 @@ function getFilters() {
     isicClass = document.getElementById("isic-class")
     cpcClass = document.getElementById("cpc-class")
     searchTerm = document.getElementById("search")
+    organisation = document.getElementById("organisation-filter")
 
     form = new FormData();
 
@@ -47,6 +48,9 @@ function getFilters() {
 
     if (searchTerm.value) {
         form.append("search", sanitizeString(searchTerm.value))
+    }
+    if (organisation.value) {
+        form.append("organisation", sanitizeString(organisation.value))
     }
 
     return form
@@ -87,12 +91,19 @@ function populateTable(data) {
             cells[key].textContent = sanitizeString(String(activity[key]))
         }
 
+        if (cells["organisations"].textContent.length > 15) {
+            console.log(1)
+            cells["organisations"].textContent = cells["organisations"].textContent.slice(0, 13) + "..."
+        }
+
+        cells["organisations"].textContent = cells["organisations"].textContent
+
         row.appendChild(cells["name"])
         row.appendChild(cells["product"])
         row.appendChild(cells["unit"])
         row.appendChild(cells["location"])
-        //row.appendChild(cells["sector"])
         row.appendChild(cells["type"])
+        row.appendChild(cells["organisations"])
 
         let showButton = document.createElement("a")
         showButton.textContent = "Show"
@@ -196,4 +207,5 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("isic-class").addEventListener("input", searchChanged)
     document.getElementById("cpc-class").addEventListener("input", searchChanged)
     document.getElementById("search").addEventListener("input", searchChanged)
+    document.getElementById("organisation-filter").addEventListener("input", searchChanged)
 })
