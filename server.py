@@ -107,6 +107,10 @@ def get_node():
         
         return json.dumps(retval)
 
+@app.route("/api/ping", methods=["GET"])
+def ping():
+    return ""
+
 if ENVIRONMENT == "PROD":
     app.run(host='0.0.0.0')
 else:
