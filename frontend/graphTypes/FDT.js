@@ -53,14 +53,14 @@ function showSidePanel(data) {
         .then((response) => response.json())
         .then((data) => {
             document.getElementById("side-panel-title").textContent = capitalise(data.name)
-            document.getElementById("side-panel-activity-uuid").textContent = data['activity uuid'].toUpperCase()
-            document.getElementById("side-panel-product-uuid").textContent = data['product uuid'].toUpperCase()
+            document.getElementById("side-panel-activity-uuid").textContent = data['activity_uuid'].toUpperCase()
+            document.getElementById("side-panel-product-uuid").textContent = data['product_uuid'].toUpperCase()
             document.getElementById("side-panel-product").textContent = data.product
             document.getElementById("side-panel-section").textContent = data.section
             document.getElementById("side-panel-sectors").textContent = data.sectors.join("; ")
             document.getElementById("side-panel-geography").textContent = data.location
             document.getElementById("side-panel-unit").textContent = data.unit
-            document.getElementById("side-panel-activity-type").textContent = data['activity type']
+            document.getElementById("side-panel-activity-type").textContent = data['activity_type']
             document.getElementById("side-panel-time-period").textContent = String(data['time-period'].start) + " - " + String(data['time-period'].finish)
             document.getElementById("side-panel-type").textContent = data['type']
             document.getElementById("side-panel-classification-isic").textContent = "None"
