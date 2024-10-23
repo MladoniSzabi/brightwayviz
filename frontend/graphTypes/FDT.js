@@ -67,15 +67,19 @@ function showSidePanel(data) {
             document.getElementById("side-panel-classification-cpc").textContent = "None"
             document.getElementById("side-panel-classification-other").textContent = "None"
 
-            for (const classificationArray of data.classifications) {
-                if (classificationArray[0].includes("ISIC")) {
-                    document.getElementById("side-panel-classification-isic").textContent = classificationArray[1]
-                } else if (classificationArray[0].includes("CPC")) {
-                    document.getElementById("side-panel-classification-cpc").textContent = classificationArray[1]
+            let otherClass = []
+
+            for (const classKey in data.classifications) {
+                if (classKey.toLowerCase().includes("isic")) {
+                    document.getElementById("side-panel-classification-isic").textContent = data.classifications[classKey]
+                } else if (classKey.toLowerCase().includes("cpc")) {
+                    document.getElementById("side-panel-classification-cpc").textContent = data.classifications[classKey]
                 } else {
-                    document.getElementById("side-panel-classification-other").textContent = classificationArray[1]
+                    otherClass.push(data.classifications[classKey])
                 }
             }
+
+            document.getElementById("side-panel-classification-other").textContent = otherClass.join(", ")
 
         })
 }
