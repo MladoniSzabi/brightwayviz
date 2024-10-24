@@ -85,7 +85,7 @@ for act in eidb:
             "{classifications.get("CPC", "NULL")}",
             {("'" + json.dumps(other_class) + "'") if other_class else "NULL"},
             '{actdict["location"]}',
-            '{actdict["type"]}',
+            '{actdict["activity type"]}',
             '{actdict["unit"]}',
             "{actdict["reference product"]}",
             {actdict["time period"]["start"]},

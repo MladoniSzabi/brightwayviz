@@ -2,11 +2,6 @@ var ItemsPerPage = 5
 var CurrentPage = 0
 var TotalItems = 0
 
-function sanitizeString(str) {
-    str = str.replace(/[^a-z0-9áéíóúñü&:() \.,_-]/gim, "");
-    return str.trim();
-}
-
 function getFilters() {
     timePeriodStart = document.getElementById("time-period-start")
     timePeriodEnd = document.getElementById("time-period-end")
@@ -22,35 +17,35 @@ function getFilters() {
     form = new FormData();
 
     if (timePeriodStart.value) {
-        form.append("time-period-start", sanitizeString(timePeriodStart.value))
+        form.append("time-period-start", timePeriodStart.value)
     }
     if (timePeriodEnd.value) {
-        form.append("time-period-end", sanitizeString(timePeriodEnd.value))
+        form.append("time-period-end", timePeriodEnd.value)
     }
     if (sector.value) {
-        form.append("sector", sanitizeString(sector.value))
+        form.append("sector", sector.value)
     }
     if (geography.value) {
-        form.append("geography", sanitizeString(geography.value))
+        form.append("geography", geography.value)
     }
     if (activityType.value) {
-        form.append("activity-type", sanitizeString(activityType.value))
+        form.append("activity-type", activityType.value)
     }
     if (isicSection.value) {
-        form.append("isic-section", sanitizeString(isicSection.value))
+        form.append("isic-section", isicSection.value)
     }
     if (isicClass.value) {
-        form.append("isic-class", sanitizeString(isicClass.value))
+        form.append("isic-class", isicClass.value)
     }
     if (cpcClass.value) {
-        form.append("cpc-class", sanitizeString(cpcClass.value))
+        form.append("cpc-class", cpcClass.value)
     }
 
     if (searchTerm.value) {
-        form.append("search", sanitizeString(searchTerm.value))
+        form.append("search", searchTerm.value)
     }
     if (organisation.value) {
-        form.append("organisation", sanitizeString(organisation.value))
+        form.append("organisation", organisation.value)
     }
 
     return form
@@ -88,7 +83,7 @@ function populateTable(data) {
         cells = {}
         for (let key in activity) {
             cells[key] = document.createElement("td")
-            cells[key].textContent = sanitizeString(String(activity[key]))
+            cells[key].textContent = String(activity[key])
         }
 
         if (cells["organisations"].textContent.length > 15) {
