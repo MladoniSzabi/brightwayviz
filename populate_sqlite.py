@@ -6,6 +6,7 @@ import bw2analyzer as bwa
 
 import sqlite3
 import json
+from tqdm import tqdm
 
 conn = sqlite3.connect("databases.db")
 cur = conn.cursor()
@@ -18,6 +19,9 @@ eidb = bd.Database(DB_NAME)
 
 BIODB_NAME = "ecoinvent-3.10-biosphere"
 biodb = bd.Database(BIODB_NAME)
+
+AGGDB_NAME = "ecoinvent-3.10-aggregates"
+aggdb = bd.Database(AGGDB_NAME)
 
 index = 1
 id_mapping = {}
@@ -51,7 +55,7 @@ cur.execute("""CREATE TABLE exchangesdataset(
 print("Loading processing activities...")
 
 cur.execute("BEGIN TRANSACTION")
-for act in eidb:
+for act in tqdm(eidb):
     actdict = act.as_dict()
 
     classifications = {c[0].replace(" ", "_").replace(".", '_'): c[1].replace("\"", "\"\"") for c in actdict["classifications"]}
@@ -106,7 +110,7 @@ cur.execute("COMMIT")
 print("Loading biosphere activities...")
 
 cur.execute("BEGIN TRANSACTION")
-for act in biodb:
+for act in tqdm(biodb):
     actdict = act.as_dict()
     id_mapping[act.key[1]] = index
     query = f"""INSERT INTO activitydataset(
@@ -150,15 +154,68 @@ for act in biodb:
         raise e
     index += 1
 cur.execute("COMMIT")
-
-
 del biodb
 
+print("Loading aggregations...")
+
+cur.execute("BEGIN TRANSACTION")
+for act in tqdm(aggdb):
+    actdict = act.as_dict()
+
+    classifications = {c[0].replace(" ", "_").replace(".", '_'): c[1].replace("\"", "\"\"") for c in actdict["classifications"]}
+    other_class = {key:classifications[key] for key in classifications if key not in["ISIC_rev_4_ecoinvent", "CPC"]}
+    if len(other_class) == 0:
+        other_class = None
+
+    id_mapping[act.key[1]] = index
+    query = f"""INSERT INTO activitydataset(
+
+        product_uuid,
+        classifications_isic,
+        classifications_other,
+        unit,
+        product,
+        time_period_start,
+        time_period_end,
+        section,
+        sectors,
+        organisations,
+
+        database,
+        activity_uuid,
+        name,
+        classifications_cpc,
+        location,
+        type) VALUES (
+            '',
+            '',
+            '',
+            'unit',
+            '',
+            0,
+            9999,
+            '',
+            '',
+            '',
+
+            '{act.key[0]}',
+            '{act.key[1]}',
+            ?,
+            ?,
+            '{actdict["location"]}',
+            'aggregation'
+        )"""
+    try:
+        cur.execute(query, (actdict["name"], classifications.get("CPC", "NULL")))
+    except Exception as e:
+        print(query)
+        raise e
+    index += 1
+cur.execute("COMMIT")
 print("Loading exchanges...")
 
 cur.execute("BEGIN TRANSACTION")
-
-for act in eidb:
+for act in tqdm(eidb):
     for exc in act.exchanges():
         if exc["input"][1] == act.key[1]:
             continue
@@ -172,6 +229,26 @@ for act in eidb:
                         {id_mapping[act.key[1]]},
                         {id_mapping[exc["input"][1]]},
                         '{'biosphere' if exc['type'] == 'biosphere' else 'inputs'}'
+                    )""")
+cur.execute("COMMIT")
+
+print("Loading aggregation exchanges...")
+
+cur.execute("BEGIN TRANSACTION")
+for act in tqdm(aggdb):
+    for exc in act.exchanges():
+        if exc["input"][1] == act.key[1]:
+            continue
+        exc = exc.as_dict()
+
+        cur.execute(f"""INSERT INTO exchangesdataset(
+                        activity_id,
+                        child_id,
+                        type
+                    ) VALUES (
+                        {id_mapping[act.key[1]]},
+                        {id_mapping[exc["input"][1]]},
+                        '{'aggregation' if exc['type'] == 'substitution' else 'inputs'}'
                     )""")
 cur.execute("COMMIT")
 
