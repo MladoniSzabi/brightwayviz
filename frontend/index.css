@@ -168,7 +168,7 @@ span.zoom {
 }
 
 #side-panel {
-    width: 40em;
+    width: 30em;
     left: 100%;
     height: calc(100% - 2px - 1em);
     background-color: rgba(226, 226, 226, 0.932);
@@ -183,7 +183,7 @@ span.zoom {
 }
 
 #side-panel.open {
-    left: calc(100% - 40em - 2px - 1em);
+    left: calc(100% - 30em - 2px - 1em);
 }
 
 #close-button {
@@ -214,4 +214,9 @@ span.zoom {
     margin-bottom: 0.3em;
     grid-column: 1 / 3;
     border-bottom: 1px solid black
+}
+
+#side-panel-activity-uuid,
+#side-panel-product-uuid {
+    word-break: break-all;
 }
