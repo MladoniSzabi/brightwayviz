@@ -285,7 +285,7 @@ function createFDTGraph(rootNode, viewbox) {
 
         nodeEnter.append("circle")
             .attr("fill", d => d.color)
-            .attr("stroke", "#000")
+            .attr("stroke", d => d.data.childCount == 0 ? "#fff" : "#000")
             .attr("stroke-width", 1.5)
             .attr("r", d => 40 + d.data.childCount / 2)
 
