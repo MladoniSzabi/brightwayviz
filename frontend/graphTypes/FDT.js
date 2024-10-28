@@ -150,10 +150,22 @@ function createFDTGraph(rootNode, viewbox) {
                 lineHeight = 1.2, // ems
                 dy = parseFloat(text.attr("dy") || 0),
                 lines = [];
-            text.text(null).attr("x", 0).attr("y", 0)
+            text.text(null).attr("x", 0).attr("y", 0).attr("font-size", "16px")
+
+            let textLength = words.join(" ").length
+            let fontSize = 16
+            if (textLength >= 110) {
+                fontSize = 10
+            } else if (textLength >= 80) {
+                fontSize = 12
+            } else if (textLength >= 50) {
+                fontSize = 14
+            }
+            text.attr("font-size", String(fontSize) + "px")
+
             while (word = words.pop()) {
                 line.push(word)
-                if (line.join(" ").length > width) {
+                if (line.join(" ").length > width * 16 / fontSize) {
                     line.pop()
                     lines.push(line.join(" "))
                     line = [word]
@@ -287,7 +299,7 @@ function createFDTGraph(rootNode, viewbox) {
             .attr("fill", d => d.color)
             .attr("stroke", d => d.data.childCount == 0 ? "#fff" : "#000")
             .attr("stroke-width", 1.5)
-            .attr("r", d => 40 + d.data.childCount / 2)
+            .attr("r", d => 80)
 
         nodeEnter.append("text")
             .text(d => d.data.name)
