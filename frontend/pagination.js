@@ -51,6 +51,11 @@ function getFilters() {
     return form
 }
 
+function setPageSize(ev) {
+    ItemsPerPage = Number(ev.target.value)
+    searchChanged(ev)
+}
+
 async function getItemCount() {
     let form = getFilters()
     let urlParams = new URLSearchParams(form)
@@ -191,6 +196,7 @@ function searchChanged(ev) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    ItemsPerPage = Number(document.getElementById("pagination-item-count").value)
     loadActivities(0)
     document.getElementById("search").addEventListener("input", searchChanged)
     document.getElementById("time-period-start").addEventListener("input", searchChanged)
@@ -203,4 +209,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("cpc-class").addEventListener("input", searchChanged)
     document.getElementById("search").addEventListener("input", searchChanged)
     document.getElementById("organisation-filter").addEventListener("input", searchChanged)
+
+    document.getElementById("pagination-item-count").addEventListener("change", setPageSize)
 })
