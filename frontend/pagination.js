@@ -154,14 +154,14 @@ function setUpPaginationPageSelect(pages) {
         container.appendChild(ellipses)
     }
 
-    for (let i = Math.max(CurrentPage - 2, 0); i < Math.min(CurrentPage + 2, pageCount - 1); i++) {
+    for (let i = Math.max(CurrentPage - 2, 0); i < Math.min(CurrentPage + 2, pageCount); i++) {
         let button = document.createElement("button")
         button.textContent = String(i + 1)
         button.onclick = () => { loadActivities(i) }
         container.appendChild(button)
     }
 
-    if (CurrentPage < pageCount - 4) {
+    if (CurrentPage < pageCount - 3) {
         let ellipses = document.createElement("p")
         ellipses.textContent = "..."
         container.appendChild(ellipses)
