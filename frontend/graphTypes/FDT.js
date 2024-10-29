@@ -129,6 +129,34 @@ function showSidePanel(data) {
         })
 }
 
+function calculateNewNodePosition(parent, index, max) {
+    let directionVector = {
+        'x': parent.x - parent.parent.x,
+        'y': parent.y - parent.parent.y
+    }
+
+    angle = Math.atan(Math.abs(directionVector.y) / Math.abs(directionVector.x))
+
+    if (directionVector.x < 0 && directionVector.y > 0) {
+        angle = Math.PI - angle
+    } else if (directionVector.x < 0 && directionVector.y < 0) {
+        angle = - (Math.PI - angle)
+    } else if (directionVector.x > 0 && directionVector.y < 0) {
+        angle = -angle
+    }
+
+    if (index != 0) {
+        angle += (Math.PI * Math.min(max * 20, 200) / 180) * ((index / (max - 1)) - 0.5)
+    }
+
+    radious = 600
+
+    return {
+        'x': parent.x + radious * Math.cos(angle),
+        'y': parent.y + radious * Math.sin(angle)
+    }
+}
+
 function generateColor() {
     const hue = Math.floor(getRand() * 360)
     const sat = Math.floor(getRand() * 50 + 50)
@@ -274,8 +302,9 @@ function createFDTGraph(rootNode, viewbox) {
                         ins.children[i]['id'] = i + ccount + 2
                         ins.children[i]['children'] = null;
                         ins.children[i]['parent'] = d
-                        ins.children[i]['x'] = d.x + Math.random() * 50
-                        ins.children[i]['y'] = d.y + Math.random() * 50
+                        let pos = calculateNewNodePosition(d, i, ins.children.length)
+                        ins.children[i]['x'] = pos.x
+                        ins.children[i]['y'] = pos.y
                         if (ins.children[i].data.isAtBoundary) {
                             ins.children[i]['color'] = generateColor()
                         } else {
