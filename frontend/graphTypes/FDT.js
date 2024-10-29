@@ -94,7 +94,7 @@ function showSidePanel(data) {
     sidePanel = document.getElementById("side-panel")
     sidePanel.classList.add("open")
 
-    fetch("/api/activity/" + String(data.id))
+    fetch("/api/activity/" + String(data.id) + "?database=" + DATABASE)
         .then((response) => response.json())
         .then((data) => {
             document.getElementById("side-panel-title").textContent = capitalise(data.name)

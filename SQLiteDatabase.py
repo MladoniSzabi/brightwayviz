@@ -3,8 +3,13 @@ import json
 
 class SQLiteDatabase:
 
+    def __init__(self,name = None):
+        if name == None:
+            name = "databases.db"
+        self.name = "file:" + name + "?mode=ro"
+
     def __enter__(self):
-        self.db = sqlite3.connect("file:databases.db?mode=ro", uri=True)
+        self.db = sqlite3.connect(self.name, uri=True)
         self.cur = self.db.cursor()
         return self
     

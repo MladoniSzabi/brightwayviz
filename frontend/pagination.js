@@ -3,18 +3,22 @@ var CurrentPage = 0
 var TotalItems = 0
 
 function getFilters() {
-    timePeriodStart = document.getElementById("time-period-start")
-    timePeriodEnd = document.getElementById("time-period-end")
-    sector = document.getElementById("sector")
-    geography = document.getElementById("geography")
-    activityType = document.getElementById("activity-type")
-    isicSection = document.getElementById("isic-section")
-    isicClass = document.getElementById("isic-class")
-    cpcClass = document.getElementById("cpc-class")
-    searchTerm = document.getElementById("search")
-    organisation = document.getElementById("organisation-filter")
+    const timePeriodStart = document.getElementById("time-period-start")
+    const timePeriodEnd = document.getElementById("time-period-end")
+    const sector = document.getElementById("sector")
+    const geography = document.getElementById("geography")
+    const activityType = document.getElementById("activity-type")
+    const isicSection = document.getElementById("isic-section")
+    const isicClass = document.getElementById("isic-class")
+    const cpcClass = document.getElementById("cpc-class")
+    const searchTerm = document.getElementById("search")
+    const organisation = document.getElementById("organisation-filter")
 
-    form = new FormData();
+    let form = new FormData();
+
+    if (DATABASE) {
+        form.append("database", DATABASE)
+    }
 
     if (timePeriodStart.value) {
         form.append("time-period-start", timePeriodStart.value)

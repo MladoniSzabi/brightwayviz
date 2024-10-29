@@ -5,6 +5,11 @@
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=close,zoom_in,zoom_out" />
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const DATABASE = urlParams.get("database")
+        console.log(DATABASE)
+    </script>
     <script src="d3.js"></script>
     <script src="graphTypes/tidyTree.js"></script>
     <script src="graphTypes/FDT.js"></script>
@@ -13,6 +18,12 @@
 </head>
 
 <body>
+    <div id="databases">
+        <p>Databases:</p>
+        <a href="?database=original">Unaggregated</a>
+        <a href="/?database=current">Aggregated</a>
+        <a href="/?database=new_candidate">New Candidate</a>
+    </div>
     <h2 id="activities-heading">Database Search</h2>
     <div id="activities">
         <div>

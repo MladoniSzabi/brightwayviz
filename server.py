@@ -1,6 +1,7 @@
 import os
 import json
 import gzip
+import re
 
 from flask import Flask, request, send_from_directory, make_response
 
@@ -36,6 +37,16 @@ app = Flask(__name__,
             static_url_path = '',
             static_folder='frontend')
 
+def get_db(db_name):
+    if db_name == None:
+        return "dbs/databases.db"
+    db_name = re.sub('[^0-9a-zA-Z_]+', '', db_name)
+    dbs = [os.path.splitext(x)[0] for x in os.listdir("dbs/")]
+    print(db_name, dbs)
+    if db_name in dbs:
+        return "dbs/" + db_name + ".db"
+    return "dbs/databases.db"
+
 @app.route("/", methods=["GET"])
 def index():
     if ENVIRONMENT == "PROD":
@@ -49,7 +60,7 @@ def index():
 def get_activity_count():
     filters = get_filters()
 
-    with SQLiteDatabase() as db:
+    with SQLiteDatabase(get_db(request.args.get("database", None))) as db:
         query = db.generate_query(filters)
         result = db.get_count(query)
         return str(result)
@@ -63,7 +74,7 @@ def get_activity_page():
     page_number = int(request.args.get("page", 0))
     page_size = min(int(request.args.get("count", 0)), 50)
 
-    with SQLiteDatabase() as db:
+    with SQLiteDatabase(get_db(request.args.get("database", None))) as db:
         query = db.generate_query(filters)
         collection = db.get_page(query, page_size, page_number, DESIRED_KEYS)
         
@@ -74,7 +85,7 @@ def get_activity_page():
 
 @app.route("/api/activity/<int:activity_id>", methods=["GET"])
 def get_activity(activity_id):
-    with SQLiteDatabase() as db:
+    with SQLiteDatabase(get_db(request.args.get("database", None))) as db:
         return json.dumps(db.get_activity(activity_id))
 
 
@@ -82,7 +93,7 @@ def get_activity(activity_id):
 def get_node():
     act_id = int(request.args.get("id"))
     assert(act_id >= 0)
-    with SQLiteDatabase() as db:
+    with SQLiteDatabase(get_db(request.args.get("database", None))) as db:
         activity = db.get_activity(act_id, ["id", "name", "type"])
         activity_children = db.get_children(act_id)
         retval = {

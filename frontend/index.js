@@ -7,13 +7,12 @@ var initialViewbox = null
 var initialPos = null
 
 async function expandNode(ev, data) {
-    const response = await fetch(`/api/node?id=${data.id}`)
+    let form = new FormData()
+    form.append("id", data.id)
+    if (DATABASE) form.append("database", DATABASE)
+    const urlParams = new URLSearchParams(form)
+    const response = await fetch(`/api/node?${urlParams.toString()}`)
     const json = await response.json()
-    // data['children'] = json['children']
-    // const graphContainer = document.getElementById("graph-container")
-    // graphContainer.innerHTML = ""
-    // const svg = createGraph()
-    // graphContainer.appendChild(svg)
 
     return json
 }
@@ -237,7 +236,11 @@ async function drawActivity(e) {
     svgContainer.innerHTML = ""
     const activity = e.detail
 
-    const response = await fetch(`/api/node?id=${activity.id}`)
+    let form = new FormData()
+    form.append("id", activity.id)
+    if (DATABASE) form.append("database", DATABASE)
+    const urlParams = new URLSearchParams(form)
+    const response = await fetch(`/api/node?${urlParams.toString()}`)
     const node = await response.json()
     rootNode = node
     const svgNode = createGraph()
