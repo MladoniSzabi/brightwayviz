@@ -96,7 +96,7 @@ def get_node():
         for index in activity_children:
             next_act = db.get_activity(index, ["id", "name", "type"])
             is_at_boundary = False
-            if is_market(activity) and not is_market(next_act):
+            if not activity['type'] == 'ordinary transforming activity' and next_act['type'] == 'ordinary transforming activity':
                 is_at_boundary = True
             retval["children"].append({
                 "id": next_act["id"],
