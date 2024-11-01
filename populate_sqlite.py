@@ -168,6 +168,9 @@ for act in tqdm(aggdb):
         other_class = None
 
     id_mapping[act.key[1]] = index
+
+    # TODO: the time period is hardcoded
+
     query = f"""INSERT INTO activitydataset(
 
         product_uuid,

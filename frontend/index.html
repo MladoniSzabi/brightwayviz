@@ -11,7 +11,7 @@
         console.log(DATABASE)
     </script>
     <script src="d3.js"></script>
-    <script src="graphTypes/tidyTree.js"></script>
+    <script src="contextMenu.js"></script>
     <script src="graphTypes/FDT.js"></script>
     <script src="pagination.js"></script>
     <script src="index.js"></script>
@@ -108,6 +108,26 @@
                     <span class="side-panel-gap"></span>
                     <span>Activity Type: </span><span id="side-panel-activity-type"></span>
                     <span>Type: </span><span id="side-panel-type"></span>
+                </div>
+            </div>
+            <div id="loading-screen">
+                <div id="spinner"></div>
+            </div>
+            <div class="context-menu" id="context-menu">
+                <div>
+                    <p>Expand Agri-Food ></p>
+                    <div class="context-menu" id="context-menu-agri-food">
+                        <p>3 layers</p>
+                        <p>5 layers</p>
+                        <p>7 layers</p>
+                    </div>
+                </div>
+                <div>
+                    <p>Expand all ></p>
+                    <div class="context-menu" id="context-menu-all">
+                        <p>2 layers</p>
+                        <p>3 layers</p>
+                    </div>
                 </div>
             </div>
         </div>

@@ -220,3 +220,59 @@ span.zoom {
 #side-panel-product-uuid {
     word-break: break-all;
 }
+
+#loading-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    background-color: rgba(255, 255, 255, 0.836);
+}
+
+#loading-screen.loading {
+    display: block;
+}
+
+#spinner {
+    width: 5vw;
+    height: 5vw;
+    border-top: solid 5px black;
+    border-bottom: solid 5px black;
+}
+
+.context-menu {
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    top: 0;
+    left: 100%;
+    width: max-content;
+    border: solid 1px black;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.context-menu p {
+    background-color: rgba(248, 248, 248, 0.966);
+    padding: 0.5em
+}
+
+.context-menu p:hover {
+    background-color: rgba(202, 202, 202, 0.966);
+}
+
+.context-menu>* {
+    border: solid 1px black
+}
+
+@keyframes spinning {
+    from {
+        transform: rotate(0);
+    }
+
+    to {
+        transform: rotate(360);
+    }
+}

@@ -17,6 +17,18 @@ if ENVIRONMENT == "PROD":
 def is_market(activity):
     return activity['type'] == 'market activity' or activity["type"] == 'market group'
 
+def is_agrifood(activity, parent):
+    if ", for sowing" in activity['name']:
+        return False
+
+    if activity['type'] == 'aggregation':
+        return True
+
+    if parent['name'] == 'Agri-Food Systems' or parent['name'] == 'Agri Food Systems':
+        return True
+
+    return False
+
 def get_filters():
     return {
         'search_criteria': request.args.get("search", ""),
@@ -42,7 +54,6 @@ def get_db(db_name):
         return "dbs/databases.db"
     db_name = re.sub('[^0-9a-zA-Z_]+', '', db_name)
     dbs = [os.path.splitext(x)[0] for x in os.listdir("dbs/")]
-    print(db_name, dbs)
     if db_name in dbs:
         return "dbs/" + db_name + ".db"
     return "dbs/databases.db"
@@ -88,35 +99,66 @@ def get_activity(activity_id):
     with SQLiteDatabase(get_db(request.args.get("database", None))) as db:
         return json.dumps(db.get_activity(activity_id))
 
+def expand_node(act_id, layer_count, db, agrifood_only):
+    if layer_count == 0:
+        return None
+    activity = db.get_activity(act_id, ["id", "name", "type"])
+    activity_children = db.get_children(act_id)
+    retval = {
+        "id": activity["id"],
+        "name": activity["name"],
+        "children": [],
+        "childCount": len(activity_children),
+        "isAtBoundary": False
+    }
+
+    for index in activity_children:
+        next_act = db.get_activity(index, ["id", "name", "type"])
+        if layer_count == 1:
+            is_at_boundary = False
+            if activity['type'] != 'ordinary transforming activity' and next_act['type'] == 'ordinary transforming activity':
+                is_at_boundary = True
+            should_add = (not agrifood_only) or (agrifood_only and is_agrifood(next_act, activity))
+            if should_add:
+                retval["children"].append({
+                    "id": next_act["id"],
+                    "name": next_act["name"],
+                    "childCount": db.get_children_count(index),
+                    "isAtBoundary": is_at_boundary
+                })
+        else:
+            should_add = (not agrifood_only) or (agrifood_only and is_agrifood(next_act, activity))
+            is_at_boundary = False
+            if activity['type'] != 'ordinary transforming activity' and next_act['type'] == 'ordinary transforming activity':
+                is_at_boundary = True
+            if should_add:
+                childNode = expand_node(index, layer_count-1, db, agrifood_only)
+                childNode["isAtBoundary"] = is_at_boundary
+                retval['children'].append(childNode)
+            else:
+                retval["children"].append({
+                    "id": next_act["id"],
+                    "name": next_act["name"],
+                    "childCount": db.get_children_count(index),
+                    "isAtBoundary": is_at_boundary
+                })
+    
+    if len(retval['children']) == 0:
+        del retval['children']
+    
+    return retval
+
 
 @app.route("/api/node", methods=["GET"])
 def get_node():
+    depth = int(request.args.get("depth", 1))
     act_id = int(request.args.get("id"))
+    agrifood_only = int(request.args.get("agrifood_only", 0))
     assert(act_id >= 0)
     with SQLiteDatabase(get_db(request.args.get("database", None))) as db:
-        activity = db.get_activity(act_id, ["id", "name", "type"])
-        activity_children = db.get_children(act_id)
-        retval = {
-            "id": activity["id"],
-            "name": activity["name"],
-            "children": [],
-            "childCount": len(activity_children),
-            "isAtBoundary": False
-        }
-
-        for index in activity_children:
-            next_act = db.get_activity(index, ["id", "name", "type"])
-            is_at_boundary = False
-            if not activity['type'] == 'ordinary transforming activity' and next_act['type'] == 'ordinary transforming activity':
-                is_at_boundary = True
-            retval["children"].append({
-                "id": next_act["id"],
-                "name": next_act["name"],
-                "childCount": db.get_children_count(index),
-                "isAtBoundary": is_at_boundary
-            })
+        retval = expand_node(act_id, depth, db, agrifood_only)
         
-        return json.dumps(retval)
+    return json.dumps(retval)
 
 @app.route("/api/ping", methods=["GET"])
 def ping():

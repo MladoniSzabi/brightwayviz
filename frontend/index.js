@@ -6,9 +6,11 @@ var initialDistance = null
 var initialViewbox = null
 var initialPos = null
 
-async function expandNode(ev, data) {
+async function expandNode(ev, data, layers = 1, agrifood_only = false) {
     let form = new FormData()
     form.append("id", data.id)
+    form.append("depth", layers)
+    form.append("agrifood_only", Number(agrifood_only))
     if (DATABASE) form.append("database", DATABASE)
     const urlParams = new URLSearchParams(form)
     const response = await fetch(`/api/node?${urlParams.toString()}`)
@@ -55,7 +57,6 @@ function handleTouchMove(ev) {
             initialViewbox = viewbox
         } else {
             const zoomFactor = (initialDistance / distance);
-            console.log(zoomFactor)
             const [touch1, touch2] = ev.touches;
             const center = {
                 x: (touch1.clientX + touch2.clientX) / 2,
@@ -138,7 +139,6 @@ function handleScroll(event) {
 
 function handleMouseMove(event) {
     if (isMouseDown) {
-        console.log(event)
         panSvg({
             x: -event.movementX,
             y: -event.movementY

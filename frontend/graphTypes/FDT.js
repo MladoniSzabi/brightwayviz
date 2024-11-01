@@ -89,7 +89,6 @@ function capitalise(str) {
 }
 
 function showSidePanel(data) {
-    console.log(data)
 
     sidePanel = document.getElementById("side-panel")
     sidePanel.classList.add("open")
@@ -163,6 +162,47 @@ function generateColor() {
     const val = Math.floor(getRand() * 40 + 40)
 
     return hslToHex(hue, sat, val)
+}
+
+function setIds(tree, start, depth, height) {
+    if (tree == null)
+        return start;
+
+    tree['id'] = ++start
+    tree['depth'] = depth++
+    tree['height'] == height++
+    if (!('children' in tree)) {
+        return start;
+    }
+    for (let i = 0; i < tree.children.length; i++) {
+        tree.children[i]['parent'] = tree
+        let pos = calculateNewNodePosition(tree, i, tree.children.length)
+        tree.children[i]['x'] = pos.x
+        tree.children[i]['y'] = pos.y
+        if (tree.children[i].data.isAtBoundary) {
+            tree.children[i]['color'] = generateColor()
+        } else {
+            tree.children[i]['color'] = tree.color
+        }
+        start = setIds(tree.children[i], start, depth, height)
+    }
+    return start
+}
+
+function addSubTree(newNode, root, d) {
+    let ins = d3.hierarchy(newNode);
+    let ccount = root.descendants().length;
+    ins.color = d.color
+    ins.parent = d.parent
+    ins.x = d.x
+    ins.y = d.y
+    setIds(ins, ccount, d.depth, d.height)
+    for (let i = 0; i < ins.children.length; i++) {
+        ins.children[i].parent = d
+    }
+    d.children = ins.children;
+    d._children = ins.children
+    d.data = newNode
 }
 
 function createFDTGraph(rootNode, viewbox) {
@@ -291,37 +331,26 @@ function createFDTGraph(rootNode, viewbox) {
                 update(event, d);
             } else {
                 expandNode(event, d.data).then((newNode) => {
-                    let ins = d3.hierarchy(newNode);
-                    let ccount = root.descendants().length;
-                    ins.depth = d.depth + 1;
-                    ins.id = ccount + 1;
-                    ins.parent = d
-                    for (let i = 0; i < ins.children.length; i++) {
-                        ins.children[i]['depth'] = 1 + d.depth
-                        ins.children[i]['height'] = 1 + d.height
-                        ins.children[i]['id'] = i + ccount + 2
-                        ins.children[i]['children'] = null;
-                        ins.children[i]['parent'] = d
-                        let pos = calculateNewNodePosition(d, i, ins.children.length)
-                        ins.children[i]['x'] = pos.x
-                        ins.children[i]['y'] = pos.y
-                        if (ins.children[i].data.isAtBoundary) {
-                            ins.children[i]['color'] = generateColor()
-                        } else {
-                            ins.children[i]['color'] = d.color
-                        }
-                    }
-                    d.children = ins.children;
-                    d._children = ins.children
-                    d.data = newNode
-                    root.sort((a, b) => d3.ascending(a.data.name, b.data.name));
-                    update(event, d);
+                    addSubTree(newNode, root, d)
+                    update(event, d)
+                    root.sort((a, b) => d3.ascending(a.data.name, b.data.name))
                 })
             }
         })
 
         nodeEnter.on('click', (event, d) => {
             showSidePanel(d.data)
+        })
+
+        nodeEnter.on('contextmenu', (ev, d) => {
+            showContextMenu(ev, (layers, agrifood_only) => {
+                expandNode(event, d.data, layers, agrifood_only).then((newNode) => {
+                    addSubTree(newNode, root, d)
+                    update(event, d)
+                    root.sort((a, b) => d3.ascending(a.data.name, b.data.name))
+                })
+            })
+            return false
         })
 
         nodeEnter.append("circle")
