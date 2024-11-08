@@ -15,7 +15,16 @@ if ENVIRONMENT == "PROD":
     print("Compressed index.html: ", len(content))
 
 def is_market(activity):
-    return activity['type'] == 'market activity' or activity["type"] == 'market group'
+    if activity['type'] == 'market activity':
+        return True
+    if activity["type"] == 'market group':
+        return True
+    if activity["type"] == "aggregation" and \
+        (activity["name"] == "Agri Food Systems" or activity["name"] == "Agri-Food Systems") and \
+        activity["product"] == "market activity":
+
+        return True
+    return False
 
 def is_agrifood(activity, parent):
     if ", for sowing" in activity['name']:
@@ -97,7 +106,21 @@ def get_activity_page():
 @app.route("/api/activity/<int:activity_id>", methods=["GET"])
 def get_activity(activity_id):
     with SQLiteDatabase(get_db(request.args.get("database", None))) as db:
-        return json.dumps(db.get_activity(activity_id))
+        act = db.get_activity(activity_id)
+        if act["type"] != "aggregation":
+            return json.dumps(act)
+
+        else:
+            if act["product_uuid"] == "":
+                return json.dumps(act)
+            parent = db.get_activity(int(act["product_uuid"]))
+            act["parent"] = parent["name"]
+            act["sector"] = parent["sectors"]
+            act["classifications"] = parent["classifications"]
+            act["section"] = parent["section"]
+            print(parent.keys())
+            return json.dumps(act)
+        
 
 def expand_node(act_id, layer_count, db, agrifood_only):
     if layer_count == 0:
@@ -129,7 +152,7 @@ def expand_node(act_id, layer_count, db, agrifood_only):
         else:
             should_add = (not agrifood_only) or (agrifood_only and is_agrifood(next_act, activity))
             is_at_boundary = False
-            if activity['type'] != 'ordinary transforming activity' and next_act['type'] == 'ordinary transforming activity':
+            if is_market(activity) and next_act['type'] == 'ordinary transforming activity':
                 is_at_boundary = True
             if should_add:
                 childNode = expand_node(index, layer_count-1, db, agrifood_only)

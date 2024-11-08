@@ -37,6 +37,7 @@ cur.execute("""CREATE TABLE activitydataset(
             classifications_isic TEXT,
             classifications_cpc TEXT,
             classifications_other TEXT,
+            classifications_hs2017 TEXT,
             location TEXT,
             type TEXT,
             unit TEXT,
@@ -71,6 +72,7 @@ for act in tqdm(eidb):
         name,
         classifications_isic,
         classifications_cpc,
+        classifications_hs2017,
         classifications_other,
         location,
         type,
@@ -85,9 +87,10 @@ for act in tqdm(eidb):
             '{actdict["activity"]}',
             '{actdict["flow"]}',
             "{actdict["name"]}",
-            "{classifications.get("ISIC_rev_4_ecoinvent", "NULL")}",
-            "{classifications.get("CPC", "NULL")}",
-            {("'" + json.dumps(other_class) + "'") if other_class else "NULL"},
+            "{classifications.get("ISIC_rev_4_ecoinvent", "")}",
+            "{classifications.get("CPC", "")}",
+            "{classifications.get("HS2017", "")}",
+            {("'" + json.dumps(other_class) + "'") if other_class else "''"},
             '{actdict["location"]}',
             '{actdict["activity type"]}',
             '{actdict["unit"]}',
@@ -120,6 +123,7 @@ for act in tqdm(biodb):
         name,
         classifications_isic,
         classifications_cpc,
+        classifications_hs2017,
         classifications_other,
         location,
         type,
@@ -134,8 +138,9 @@ for act in tqdm(biodb):
             '{actdict["code"]}',
             '{actdict["CAS number"]}',
             "{actdict["name"]}",
-            NULL,
-            NULL,
+            '',
+            '',
+            '',
             '{json.dumps(actdict["categories"])}',
             '',
             '{actdict["type"]}',
@@ -161,6 +166,10 @@ print("Loading aggregations...")
 cur.execute("BEGIN TRANSACTION")
 for act in tqdm(aggdb):
     actdict = act.as_dict()
+    parent = eidb.get(actdict["parent"]).as_dict()
+    #print(parent)
+    parent_class = {c[0].replace(" ", "_").replace(".", '_'): c[1].replace("\"", "\"\"") for c in parent["classifications"]}
+    parent_other = {key:parent_class[key] for key in parent_class if key not in["ISIC_rev_4_ecoinvent", "CPC"]}
 
     classifications = {c[0].replace(" ", "_").replace(".", '_'): c[1].replace("\"", "\"\"") for c in actdict["classifications"]}
     other_class = {key:classifications[key] for key in classifications if key not in["ISIC_rev_4_ecoinvent", "CPC"]}
@@ -175,6 +184,8 @@ for act in tqdm(aggdb):
 
         product_uuid,
         classifications_isic,
+        classifications_cpc,
+        classifications_hs2017,
         classifications_other,
         unit,
         product,
@@ -187,29 +198,29 @@ for act in tqdm(aggdb):
         database,
         activity_uuid,
         name,
-        classifications_cpc,
         location,
         type) VALUES (
-            '',
-            '',
-            '',
+            "{id_mapping[actdict["parent"]]}",
+            "{classifications.get("ISIC_rev_4_ecoinvent", parent_class.get("ISIC_rev_4_ecoinvent", ""))}",
+            "{classifications.get("CPC", parent_class.get("CPC", ""))}",
+            "{classifications.get("HS2017", parent_class.get("HS2017", ""))}",
+            {("'" + json.dumps(parent_other) + "'") if parent_other else "''"},
             'unit',
-            '',
+            '{parent['activity type']}',
             0,
             9999,
-            '',
-            '',
+            "{parent["section"]}",
+            "{','.join(parent["sector"])}",
             '',
 
             '{act.key[0]}',
             '{act.key[1]}',
             ?,
-            ?,
             '{actdict["location"]}',
             'aggregation'
         )"""
     try:
-        cur.execute(query, (actdict["name"], classifications.get("CPC", "NULL")))
+        cur.execute(query, (actdict["name"],))
     except Exception as e:
         print(query)
         raise e

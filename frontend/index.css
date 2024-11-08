@@ -194,9 +194,10 @@ span.zoom {
     pointer-events: all;
 }
 
-#side-panel-data {
+#side-panel-data,
+#side-panel-aggregation {
     display: grid;
-    grid-template-columns: max-content 1fr;
+    grid-template-columns: fit-content(40%) 1fr;
     column-gap: 0.5em;
 }
 
@@ -205,8 +206,13 @@ span.zoom {
 }
 
 #side-panel-data span,
+#side-panel-aggregation span,
 #side-panel h2 {
     pointer-events: all;
+}
+
+#side-panel-aggregation span {
+    margin-bottom: 0.4em;
 }
 
 .side-panel-gap {

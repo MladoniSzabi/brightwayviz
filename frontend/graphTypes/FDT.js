@@ -88,43 +88,83 @@ function capitalise(str) {
     return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-function showSidePanel(data) {
+function populateAggregationSidePanel(data) {
+    let x = { asd: 1 }
+    fetch("/api/activity/" + String(data.id) + "?database=" + DATABASE)
+        .then((response) => response.json())
+        .then((data) => {
+            document.getElementById("side-panel-aggregation").style.display = ""
+            document.getElementById("side-panel-data").style.display = "none"
 
+            document.getElementById("side-panel-title").textContent = data.name
+            document.getElementById("side-panel-aggr-parent").textContent = data['parent']
+            document.getElementById("side-panel-aggr-sector").textContent = data['sector']
+            document.getElementById("side-panel-aggr-section").textContent = data.section
+            document.getElementById("side-panel-aggr-type").textContent = data['type']
+
+            let otherClass = []
+
+            for (const classKey in data.classifications) {
+                if (classKey.toLowerCase().includes("isic")) {
+                    document.getElementById("side-panel-aggr-isic").textContent = data.classifications[classKey]
+                } else if (classKey.toLowerCase().includes("cpc")) {
+                    document.getElementById("side-panel-aggr-cpc").textContent = data.classifications[classKey]
+                } else if (classKey.toLowerCase().includes("hs2017")) {
+                    document.getElementById("side-panel-aggr-hs").textContent = data.classifications[classKey]
+                } else {
+                    otherClass.push(data.classifications[classKey])
+                }
+            }
+        })
+}
+
+function populateSidePanel(data) {
+
+    document.getElementById("side-panel-aggregation").style.display = "none"
+    document.getElementById("side-panel-data").style.display = ""
+
+    document.getElementById("side-panel-title").textContent = capitalise(data.name)
+    document.getElementById("side-panel-activity-uuid").textContent = data['activity_uuid'].toUpperCase()
+    document.getElementById("side-panel-product-uuid").textContent = data['product_uuid'].toUpperCase()
+    document.getElementById("side-panel-product").textContent = data.product
+    document.getElementById("side-panel-section").textContent = data.section
+    document.getElementById("side-panel-sectors").textContent = data.sectors.join("; ")
+    document.getElementById("side-panel-geography").textContent = data.location
+    document.getElementById("side-panel-unit").textContent = data.unit
+    document.getElementById("side-panel-time-period").textContent = String(data['time-period'].start) + " - " + String(data['time-period'].finish)
+    document.getElementById("side-panel-type").textContent = data['type']
+    document.getElementById("side-panel-classification-isic").textContent = "None"
+    document.getElementById("side-panel-classification-cpc").textContent = "None"
+    document.getElementById("side-panel-classification-other").textContent = "None"
+
+    let otherClass = []
+
+    for (const classKey in data.classifications) {
+        if (classKey.toLowerCase().includes("isic")) {
+            document.getElementById("side-panel-classification-isic").textContent = data.classifications[classKey]
+        } else if (classKey.toLowerCase().includes("cpc")) {
+            document.getElementById("side-panel-classification-cpc").textContent = data.classifications[classKey]
+        } else {
+            otherClass.push(data.classifications[classKey])
+        }
+    }
+
+    document.getElementById("side-panel-classification-other").textContent = otherClass.join(", ")
+}
+
+function showSidePanel(data) {
     sidePanel = document.getElementById("side-panel")
     sidePanel.classList.add("open")
 
     fetch("/api/activity/" + String(data.id) + "?database=" + DATABASE)
         .then((response) => response.json())
         .then((data) => {
-            document.getElementById("side-panel-title").textContent = capitalise(data.name)
-            document.getElementById("side-panel-activity-uuid").textContent = data['activity_uuid'].toUpperCase()
-            document.getElementById("side-panel-product-uuid").textContent = data['product_uuid'].toUpperCase()
-            document.getElementById("side-panel-product").textContent = data.product
-            document.getElementById("side-panel-section").textContent = data.section
-            document.getElementById("side-panel-sectors").textContent = data.sectors.join("; ")
-            document.getElementById("side-panel-geography").textContent = data.location
-            document.getElementById("side-panel-unit").textContent = data.unit
-            document.getElementById("side-panel-activity-type").textContent = data['activity_type']
-            document.getElementById("side-panel-time-period").textContent = String(data['time-period'].start) + " - " + String(data['time-period'].finish)
-            document.getElementById("side-panel-type").textContent = data['type']
-            document.getElementById("side-panel-classification-isic").textContent = "None"
-            document.getElementById("side-panel-classification-cpc").textContent = "None"
-            document.getElementById("side-panel-classification-other").textContent = "None"
-
-            let otherClass = []
-
-            for (const classKey in data.classifications) {
-                if (classKey.toLowerCase().includes("isic")) {
-                    document.getElementById("side-panel-classification-isic").textContent = data.classifications[classKey]
-                } else if (classKey.toLowerCase().includes("cpc")) {
-                    document.getElementById("side-panel-classification-cpc").textContent = data.classifications[classKey]
-                } else {
-                    otherClass.push(data.classifications[classKey])
-                }
+            console.log(data)
+            if (data["type"] == "aggregation" && "parent" in data) {
+                populateAggregationSidePanel(data);
+            } else {
+                populateSidePanel(data)
             }
-
-            document.getElementById("side-panel-classification-other").textContent = otherClass.join(", ")
-
         })
 }
 
