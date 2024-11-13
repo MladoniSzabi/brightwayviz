@@ -225,16 +225,7 @@ function createGraph() {
     return svgNode
 }
 
-async function drawActivity(e) {
-
-    viewbox = null
-
-    const activityContainer = document.getElementById("activities")
-    activityContainer.style.maxHeight = null
-
-    const svgContainer = document.getElementById("svg-container")
-    svgContainer.innerHTML = ""
-    const activity = e.detail
+async function getActivity(activity) {
 
     let form = new FormData()
     form.append("id", activity.id)
@@ -243,6 +234,18 @@ async function drawActivity(e) {
     const response = await fetch(`/api/node?${urlParams.toString()}`)
     const node = await response.json()
     rootNode = node
+}
+
+async function drawActivity() {
+
+    viewbox = null
+
+    const activityContainer = document.getElementById("activities")
+    activityContainer.style.maxHeight = null
+
+    const svgContainer = document.getElementById("svg-container")
+    svgContainer.innerHTML = ""
+
     const svgNode = createGraph()
     svgContainer.appendChild(svgNode)
 
@@ -252,9 +255,29 @@ async function drawActivity(e) {
     zoomOut.style.display = 'inline'
 }
 
+function onDrop(event) {
+    event.preventDefault()
+    const file = event.dataTransfer.items[0].getAsFile()
+    const reader = new FileReader()
+    reader.addEventListener("load", () => {
+        let data = JSON.parse(reader.result)
+        rootNode = data
+        drawActivity()
+    }, false)
+    if (file) {
+        reader.readAsText(file);
+    }
+    return false
+}
+
+function onDragOver(event) {
+    event.preventDefault()
+    return false;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("page-content")
-    container.addEventListener("draw-activity", drawActivity)
+    container.addEventListener("draw-activity", async (e) => { await getActivity(e.detail), drawActivity() })
 
     const activityContainer = document.getElementById("activities")
     activityContainer.style.maxHeight = activityContainer.scrollHeight + "px"
@@ -275,4 +298,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("mouseup", handleMouseUp)
     document.addEventListener("mousemove", handleMouseMove)
+    document.body.addEventListener("drop", onDrop)
+    document.body.addEventListener("dragover", onDragOver)
 })

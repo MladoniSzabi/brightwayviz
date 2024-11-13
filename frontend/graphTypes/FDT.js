@@ -370,27 +370,34 @@ function createFDTGraph(rootNode, viewbox) {
                 d.children = d.children ? null : d._children;
                 update(event, d);
             } else {
-                expandNode(event, d.data).then((newNode) => {
-                    addSubTree(newNode, root, d)
-                    update(event, d)
-                    root.sort((a, b) => d3.ascending(a.data.name, b.data.name))
-                })
+                if (d.data.id) {
+                    expandNode(event, d.data).then((newNode) => {
+                        addSubTree(newNode, root, d)
+                        update(event, d)
+                        root.sort((a, b) => d3.ascending(a.data.name, b.data.name))
+                    })
+                }
             }
         })
 
         nodeEnter.on('click', (event, d) => {
-            showSidePanel(d.data)
+            if (d.data.id) {
+                showSidePanel(d.data)
+            }
         })
 
         nodeEnter.on('contextmenu', (ev, d) => {
-            showContextMenu(ev, (layers, agrifood_only) => {
-                expandNode(event, d.data, layers, agrifood_only).then((newNode) => {
-                    addSubTree(newNode, root, d)
-                    update(event, d)
-                    root.sort((a, b) => d3.ascending(a.data.name, b.data.name))
+            if (d.data.id) {
+                showContextMenu(ev, (layers, agrifood_only) => {
+                    expandNode(event, d.data, layers, agrifood_only).then((newNode) => {
+                        addSubTree(newNode, root, d)
+                        update(event, d)
+                        root.sort((a, b) => d3.ascending(a.data.name, b.data.name))
+                    })
                 })
-            })
-            return false
+
+                return false
+            }
         })
 
         nodeEnter.append("circle")
