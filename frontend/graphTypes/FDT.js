@@ -368,7 +368,13 @@ function createFDTGraph(rootNode, viewbox) {
         nodeEnter.on('dblclick', (event, d) => {
             if (d._children) {
                 d.children = d.children ? null : d._children;
-                update(event, d);
+                update(event, d)
+            } else if (d.data._children) {
+                d.children = []
+                d.data.children = d.data._children
+                addSubTree(d.data, root, d)
+                //d.children = d.children ? null : d.data._children
+                update(event, d)
             } else {
                 if (d.data.id) {
                     expandNode(event, d.data).then((newNode) => {
@@ -403,7 +409,7 @@ function createFDTGraph(rootNode, viewbox) {
         nodeEnter.append("circle")
             .attr("fill", d => d.color)
             .attr("stroke", d => d.data.childCount == 0 ? "#fff" : "#000")
-            .attr("stroke-width", 1.5)
+            .attr("stroke-width", 3)
             .attr("r", d => 80)
 
         nodeEnter.append("text")
