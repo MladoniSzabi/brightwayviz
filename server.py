@@ -139,7 +139,7 @@ def expand_node(act_id, layer_count, db, agrifood_only):
         next_act = db.get_activity(index, ["id", "name", "type"])
         if layer_count == 1:
             is_at_boundary = False
-            if activity['type'] != 'ordinary transforming activity' and next_act['type'] == 'ordinary transforming activity':
+            if (activity['type'] != 'ordinary transforming activity' and activity["name"] != "Other") and next_act['type'] == 'ordinary transforming activity':
                 is_at_boundary = True
             should_add = (not agrifood_only) or (agrifood_only and is_agrifood(next_act, activity))
             if should_add:
