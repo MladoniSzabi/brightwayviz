@@ -204,6 +204,9 @@ def expand_node(act_id, layer_count, db, agrifood_only):
             continue
 
         next_colour = get_colour(next_act["tag"])
+        if next_act["type"] == "ordinary transforming activity" and activity["type"] == "ordinary transforming activity":
+            next_colour = "#ce5a5a"
+            
         if layer_count == 1:
             childObject = {
                 "id": next_act["id"],
