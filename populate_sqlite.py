@@ -46,16 +46,34 @@ cur.execute("""CREATE TABLE activitydataset(
             time_period_end INTEGER,
             section TEXT,
             sectors TEXT,
-            organisations TEXT); """)
+            organisations TEXT,
+            emission NUMBER,
+            tag TEXT,
+            expand INTEGER); """)
 
 cur.execute("""CREATE TABLE exchangesdataset(
             activity_id INTEGER REFERENCES activitydataset(rowid),
             child_id INTEGER REFERENCES activitydataset(rowid),
-            type TEXT);""")
+            type TEXT,
+            amount NUMBER);""")
 
 print("Loading processing activities...")
 
+method = (('CML v4.8 2016', 'climate change', 'global warming potential (GWP100)'))
 cur.execute("BEGIN TRANSACTION")
+
+max_len = len(eidb)
+
+with open("emissions.json") as f:
+    emissions = json.load(f)
+
+def calc_emission(act):
+    functional_unit = {act:1}
+    lca = bw.LCA(functional_unit, method)
+    lca.lci()  # Perform the life cycle inventory
+    lca.lcia()  # Perform the impact assessment
+    return lca.score
+
 for act in tqdm(eidb):
     actdict = act.as_dict()
 
@@ -63,6 +81,14 @@ for act in tqdm(eidb):
     other_class = {key:classifications[key] for key in classifications if key not in["ISIC_rev_4_ecoinvent", "CPC"]}
     if len(other_class) == 0:
         other_class = None
+    
+    emission = 0
+    #emission = emissions[act.key[0] + "_" + act.key[1]]
+    # functional_unit = {act:1}
+    # lca = bw.LCA(functional_unit, method)
+    # lca.lci()  # Perform the life cycle inventory
+    # lca.lcia()  # Perform the impact assessment
+    # emission = lca.score
 
     id_mapping[act.key[1]] = index
     query = f"""INSERT INTO activitydataset(
@@ -82,7 +108,10 @@ for act in tqdm(eidb):
         time_period_end,
         section,
         sectors,
-        organisations) VALUES (
+        organisations,
+        emission,
+        tag,
+        expand) VALUES (
             '{act.key[0]}',
             '{actdict["activity"]}',
             '{actdict["flow"]}',
@@ -99,7 +128,10 @@ for act in tqdm(eidb):
             {actdict["time period"]["finish"]},
             '{actdict["section"]}',
             "{','.join(actdict["sector"])}",
-            '{',' + ','.join(map(str, actdict["organisations"])) + ','}'
+            '{',' + ','.join(map(str, actdict["organisations"])) + ','}',
+            {emission},
+            '{actdict.get('tag', '')}',
+            {int(actdict['expand'])}
     )"""
     try:
         cur.execute(query)
@@ -116,6 +148,7 @@ cur.execute("BEGIN TRANSACTION")
 for act in tqdm(biodb):
     actdict = act.as_dict()
     id_mapping[act.key[1]] = index
+
     query = f"""INSERT INTO activitydataset(
         database,
         activity_uuid,
@@ -133,7 +166,10 @@ for act in tqdm(biodb):
         time_period_end,
         section,
         sectors,
-        organisations) VALUES (
+        organisations,
+        emission,
+        tag,
+        expand) VALUES (
             '{act.key[0]}',
             '{actdict["code"]}',
             '{actdict["CAS number"]}',
@@ -150,7 +186,10 @@ for act in tqdm(biodb):
             9999,
             '',
             '',
-            ''
+            '',
+            0,
+            '{actdict.get('tag', '')}',
+            {0}
         )"""
     try:
         cur.execute(query)
@@ -178,6 +217,14 @@ for act in tqdm(aggdb):
 
     id_mapping[act.key[1]] = index
 
+    emission = 0
+    #emission = emissions[act.key[0] + "_" + act.key[1]]
+    # functional_unit = {act:1}
+    # lca = bw.LCA(functional_unit, method)
+    # lca.lci()  # Perform the life cycle inventory
+    # lca.lcia()  # Perform the impact assessment
+    # emission = lca.score
+
     # TODO: the time period is hardcoded
 
     query = f"""INSERT INTO activitydataset(
@@ -199,7 +246,8 @@ for act in tqdm(aggdb):
         activity_uuid,
         name,
         location,
-        type) VALUES (
+        type,
+        emission) VALUES (
             "{id_mapping[actdict["parent"]]}",
             "{classifications.get("ISIC_rev_4_ecoinvent", parent_class.get("ISIC_rev_4_ecoinvent", ""))}",
             "{classifications.get("CPC", parent_class.get("CPC", ""))}",
@@ -217,7 +265,8 @@ for act in tqdm(aggdb):
             '{act.key[1]}',
             ?,
             '{actdict["location"]}',
-            'aggregation'
+            'aggregation',
+            {emission}
         )"""
     try:
         cur.execute(query, (actdict["name"],))
@@ -233,16 +282,18 @@ for act in tqdm(eidb):
     for exc in act.exchanges():
         if exc["input"][1] == act.key[1]:
             continue
-        exc = exc.as_dict()
+        excd = exc.as_dict()
 
         cur.execute(f"""INSERT INTO exchangesdataset(
                         activity_id,
                         child_id,
-                        type
+                        type,
+                        amount
                     ) VALUES (
                         {id_mapping[act.key[1]]},
-                        {id_mapping[exc["input"][1]]},
-                        '{'biosphere' if exc['type'] == 'biosphere' else 'inputs'}'
+                        {id_mapping[excd["input"][1]]},
+                        '{'biosphere' if excd['type'] == 'biosphere' else 'inputs'}',
+                        {exc.amount}
                     )""")
 cur.execute("COMMIT")
 
@@ -253,16 +304,18 @@ for act in tqdm(aggdb):
     for exc in act.exchanges():
         if exc["input"][1] == act.key[1]:
             continue
-        exc = exc.as_dict()
+        excd = exc.as_dict()
 
         cur.execute(f"""INSERT INTO exchangesdataset(
                         activity_id,
                         child_id,
-                        type
+                        type,
+                        amount
                     ) VALUES (
                         {id_mapping[act.key[1]]},
-                        {id_mapping[exc["input"][1]]},
-                        '{'aggregation' if exc['type'] == 'substitution' else 'inputs'}'
+                        {id_mapping[excd["input"][1]]},
+                        '{'aggregation' if excd['type'] == 'substitution' else 'inputs'}',
+                        {exc.amount}
                     )""")
 cur.execute("COMMIT")
 

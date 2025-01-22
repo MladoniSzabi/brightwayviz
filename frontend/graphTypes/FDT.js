@@ -89,7 +89,6 @@ function capitalise(str) {
 }
 
 function populateAggregationSidePanel(data) {
-    let x = { asd: 1 }
     fetch("/api/activity/" + String(data.id) + "?database=" + DATABASE)
         .then((response) => response.json())
         .then((data) => {
@@ -169,31 +168,34 @@ function showSidePanel(data) {
 }
 
 function calculateNewNodePosition(parent, index, max) {
-    let directionVector = {
-        'x': parent.x - parent.parent.x,
-        'y': parent.y - parent.parent.y
+    if (parent.parent) {
+        let directionVector = {
+            'x': parent.x - parent.parent.x,
+            'y': parent.y - parent.parent.y
+        }
+
+        angle = Math.atan(Math.abs(directionVector.y) / Math.abs(directionVector.x))
+
+        if (directionVector.x < 0 && directionVector.y > 0) {
+            angle = Math.PI - angle
+        } else if (directionVector.x < 0 && directionVector.y < 0) {
+            angle = - (Math.PI - angle)
+        } else if (directionVector.x > 0 && directionVector.y < 0) {
+            angle = -angle
+        }
+
+        if (index != 0) {
+            angle += (Math.PI * Math.min(max * 20, 200) / 180) * ((index / (max - 1)) - 0.5)
+        }
+
+        radious = 600
+        return {
+            'x': parent.x + radious * Math.cos(angle),
+            'y': parent.y + radious * Math.sin(angle)
+        }
     }
 
-    angle = Math.atan(Math.abs(directionVector.y) / Math.abs(directionVector.x))
-
-    if (directionVector.x < 0 && directionVector.y > 0) {
-        angle = Math.PI - angle
-    } else if (directionVector.x < 0 && directionVector.y < 0) {
-        angle = - (Math.PI - angle)
-    } else if (directionVector.x > 0 && directionVector.y < 0) {
-        angle = -angle
-    }
-
-    if (index != 0) {
-        angle += (Math.PI * Math.min(max * 20, 200) / 180) * ((index / (max - 1)) - 0.5)
-    }
-
-    radious = 600
-
-    return {
-        'x': parent.x + radious * Math.cos(angle),
-        'y': parent.y + radious * Math.sin(angle)
-    }
+    return { 'x': 0, 'y': 0 }
 }
 
 function generateColor() {
@@ -219,7 +221,10 @@ function setIds(tree, start, depth, height) {
         let pos = calculateNewNodePosition(tree, i, tree.children.length)
         tree.children[i]['x'] = pos.x
         tree.children[i]['y'] = pos.y
-        if (tree.children[i].data.isAtBoundary) {
+        console.log(tree.children[i].data)
+        if (tree.children[i].data["colour"]) {
+            tree.children[i]["color"] = tree.children[i].data["colour"]
+        } else if (tree.children[i].data.isAtBoundary) {
             tree.children[i]['color'] = generateColor()
         } else {
             tree.children[i]['color'] = tree.color
@@ -305,7 +310,10 @@ function createFDTGraph(rootNode, viewbox) {
     root.descendants().forEach((d, i) => {
         d.id = i;
         d._children = d.children;
-        if (d.data.isAtBoundary) {
+        if (d.data.colour) {
+            d.color = d.data.colour
+        }
+        else if (d.data.isAtBoundary) {
             d.color = generateColor()
         } else {
             d.color = color
@@ -394,6 +402,11 @@ function createFDTGraph(rootNode, viewbox) {
 
         nodeEnter.on('contextmenu', (ev, d) => {
             if (d.data.id) {
+                if (d.data.children || d.data._children) {
+                    ev.stopPropagation()
+                    ev.preventDefault()
+                    return false
+                }
                 showContextMenu(ev, (layers, agrifood_only) => {
                     expandNode(event, d.data, layers, agrifood_only).then((newNode) => {
                         addSubTree(newNode, root, d)

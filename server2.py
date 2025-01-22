@@ -2,8 +2,6 @@ import os
 import json
 import gzip
 import re
-import random
-import sys
 
 from flask import Flask, request, send_from_directory, make_response
 
@@ -26,6 +24,18 @@ def is_market(activity):
         activity["product"] == "market activity":
 
         return True
+    return False
+
+def is_agrifood(activity, parent):
+    if ", for sowing" in activity['name']:
+        return False
+
+    if activity['type'] == 'aggregation':
+        return True
+
+    if parent['name'] == 'Agri-Food Systems' or parent['name'] == 'Agri Food Systems':
+        return True
+
     return False
 
 def get_filters():
@@ -110,126 +120,43 @@ def get_activity(activity_id):
             act["section"] = parent["section"]
             print(parent.keys())
             return json.dumps(act)
-
-def get_colour(tag):
-        if tag == "renewable_wind":
-            return "#8fd14d"
-        elif tag == "renewable_hydro":
-            return "#66a22a"
-        elif tag == "renewable_solar":
-            return "#b3e085"
-        elif tag == "renewable_geothermal":
-            return "#8fe33b3"
-        elif tag == "renewable_methanol":
-            return "#66b319"
-        elif tag == "renewable_biogas":
-            return "#b3ec79"
-        elif tag == "renewable_biometahne":
-            return "#8fc15c"
-        elif tag == "renewable_ethanol":
-            return "#669438"
-        elif tag == "renewable_biodiesel":
-            return "#b3d590"
-        elif tag == "production_process":
-            return "#85b8ff"
-        elif tag == "gaseous_fuel":
-            return "#cce1ff"
-        elif tag == "liquid_fuel":
-            return "#d0e2fb"
-        elif tag == "solid_fuel":
-            return "#8eb9f6"
-        elif tag == "electricity":
-            return "#12CDD4"
-        elif tag == "heat_and_steam":
-            return "#0c888d"
-        elif tag == "cooling":
-            return "#22bec3"
-        elif tag == "purchased_goods_and_services":
-            return "#414BB2"
-        elif tag == "transport_and_distribution":
-            return "#3d46a9"
-        elif tag == "fuel_and_energy_related_activities":
-            return "#505695"
-        elif tag == "business_travel":
-            return "#5057a5"
-        elif tag == "capital_goods":
-            return "#878cc5"
-        elif tag == "waste":
-            return "#7981d2"
-
-        return None
+        
 
 def expand_node(act_id, layer_count, db, agrifood_only):
-
     if layer_count == 0:
         return None
-    activity = db.get_activity(act_id, ["id", "name", "type", "tag"])
+    activity = db.get_activity(act_id, ["id", "name", "type"])
     activity_children = db.get_children(act_id)
     retval = {
         "id": activity["id"],
         "name": activity["name"],
         "children": [],
         "childCount": len(activity_children),
+        "isAtBoundary": False
     }
 
-    colour = get_colour(activity["tag"])
-    if colour:
-        retval["colour"] = colour
-
-    aggregate_children = {}
-
     for index in activity_children:
-        next_act = db.get_activity(index, ["id", "name", "type", "tag", "expand"])
-        if next_act["tag"] == "production_process":
-            if "production_process" not in aggregate_children:
-                childObject = {
-                    "id": 0,
-                    "name": "Production processes",
-                    "childCount": 1,
-                    "colour": get_colour("production_process"),
-                    "_children": [{
-                        "id": next_act["id"],
-                        "name": next_act["name"],
-                        "childCount": 0
-                    }]
-                }
-                aggregate_children["production_process"] = childObject
-            else:
-                aggregate_children["production_process"]["childCount"] += 1
-                aggregate_children["production_process"]["_children"].append({
-                    "id": next_act["id"],
-                    "name": next_act["name"],
-                    "childCount": 0
-                })
-            continue
-
-        next_colour = get_colour(next_act["tag"])
+        next_act = db.get_activity(index, ["id", "name", "type"])
         if layer_count == 1:
-            childObject = {
-                "id": next_act["id"],
-                "name": next_act["name"],
-                "childCount": db.get_children_count(index),
-            }
-            if next_colour:
-                childObject["colour"] = next_colour
-            retval["children"].append(childObject)
-        else:
-            if next_act["tag"] == "purchased_goods_and_services":
-                childNode = expand_node(index, layer_count-1, db, agrifood_only)
-                retval['children'].append(childNode)
-            else:
-                childObject = {
+            should_add = (not agrifood_only) or (agrifood_only and is_agrifood(next_act, activity))
+            if should_add:
+                retval["children"].append({
                     "id": next_act["id"],
                     "name": next_act["name"],
                     "childCount": db.get_children_count(index),
-                }
-                if next_colour:
-                    childObject["colour"] = next_colour
-                retval["children"].append(childObject)
+                })
+        else:
+            should_add = (not agrifood_only) or (agrifood_only and is_agrifood(next_act, activity))
+            if should_add:
+                childNode = expand_node(index, layer_count-1, db, agrifood_only)
+                retval['children'].append(childNode)
+            else:
+                retval["children"].append({
+                    "id": next_act["id"],
+                    "name": next_act["name"],
+                    "childCount": db.get_children_count(index),
+                })
     
-    for k in aggregate_children:
-        retval["children"].append(aggregate_children[k])
-
     if len(retval['children']) == 0:
         del retval['children']
     
