@@ -48,8 +48,7 @@ cur.execute("""CREATE TABLE activitydataset(
             sectors TEXT,
             organisations TEXT,
             emission NUMBER,
-            tag TEXT,
-            expand INTEGER); """)
+            tag TEXT); """)
 
 cur.execute("""CREATE TABLE exchangesdataset(
             activity_id INTEGER REFERENCES activitydataset(rowid),
@@ -110,8 +109,7 @@ for act in tqdm(eidb):
         sectors,
         organisations,
         emission,
-        tag,
-        expand) VALUES (
+        tag) VALUES (
             '{act.key[0]}',
             '{actdict["activity"]}',
             '{actdict["flow"]}',
@@ -130,8 +128,7 @@ for act in tqdm(eidb):
             "{','.join(actdict["sector"])}",
             '{',' + ','.join(map(str, actdict["organisations"])) + ','}',
             {emission},
-            '{actdict.get('tag', '')}',
-            {int(actdict['expand'])}
+            '{actdict.get('tag', '')}'
     )"""
     try:
         cur.execute(query)
@@ -168,8 +165,7 @@ for act in tqdm(biodb):
         sectors,
         organisations,
         emission,
-        tag,
-        expand) VALUES (
+        tag) VALUES (
             '{act.key[0]}',
             '{actdict["code"]}',
             '{actdict["CAS number"]}',
@@ -188,8 +184,7 @@ for act in tqdm(biodb):
             '',
             '',
             0,
-            '{actdict.get('tag', '')}',
-            {0}
+            '{actdict.get('tag', '')}'
         )"""
     try:
         cur.execute(query)

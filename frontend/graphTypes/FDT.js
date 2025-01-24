@@ -206,6 +206,57 @@ function generateColor() {
     return hslToHex(hue, sat, val)
 }
 
+function getColorFromTag(tag) {
+    if (tag == "renewable_wind")
+        return "#8fd14d"
+    else if (tag == "renewable_hydro")
+        return "#66a22a"
+    else if (tag == "renewable_solar")
+        return "#b3e085"
+    else if (tag == "renewable_geothermal")
+        return "#8fe33b3"
+    else if (tag == "renewable_methanol")
+        return "#66b319"
+    else if (tag == "renewable_biogas")
+        return "#b3ec79"
+    else if (tag == "renewable_biometahne")
+        return "#8fc15c"
+    else if (tag == "renewable_ethanol")
+        return "#669438"
+    else if (tag == "renewable_biodiesel")
+        return "#b3d590"
+    else if (tag == "production_process")
+        return "#85b8ff"
+    else if (tag == "gaseous_fuel")
+        return "#cce1ff"
+    else if (tag == "liquid_fuel")
+        return "#d0e2fb"
+    else if (tag == "solid_fuel")
+        return "#8eb9f6"
+    else if (tag == "electricity")
+        return "#12CDD4"
+    else if (tag == "heat_and_steam")
+        return "#0c888d"
+    else if (tag == "cooling")
+        return "#22bec3"
+    else if (tag == "purchased_goods_and_services")
+        return "#414BB2"
+    else if (tag == "transport_and_distribution")
+        return "#383e7a"
+    else if (tag == "fuel_and_energy_related_activities")
+        return "#505695"
+    else if (tag == "business_travel")
+        return "#5057a5"
+    else if (tag == "capital_goods")
+        return "#878cc5"
+    else if (tag == "waste")
+        return "#7981d2"
+    else if (tag == "intermediate")
+        return "#ce5a5a"
+
+    return null
+}
+
 function setIds(tree, start, depth, height) {
     if (tree == null)
         return start;
@@ -224,7 +275,10 @@ function setIds(tree, start, depth, height) {
         console.log(tree.children[i].data)
         if (tree.children[i].data["colour"]) {
             tree.children[i]["color"] = tree.children[i].data["colour"]
-        } else if (tree.children[i].data.isAtBoundary) {
+        } else if (tree.children[i].data["tag"] && getColorFromTag(tree.children[i].data["tag"])) {
+            tree.children[i]["color"] = getColorFromTag(tree.children[i].data["tag"])
+        }
+        else if (tree.children[i].data.isAtBoundary) {
             tree.children[i]['color'] = generateColor()
         } else {
             tree.children[i]['color'] = tree.color
@@ -312,6 +366,9 @@ function createFDTGraph(rootNode, viewbox) {
         d._children = d.children;
         if (d.data.colour) {
             d.color = d.data.colour
+        }
+        else if (d.data.tag && getColorFromTag(d.data.tag)) {
+            d.color = getColorFromTag(d.data.tag)
         }
         else if (d.data.isAtBoundary) {
             d.color = generateColor()

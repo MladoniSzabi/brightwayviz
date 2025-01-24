@@ -256,6 +256,7 @@ async function drawActivity() {
 }
 
 function onDrop(event) {
+    console.log("ASDASD")
     event.preventDefault()
     const file = event.dataTransfer.items[0].getAsFile()
     const reader = new FileReader()
@@ -298,6 +299,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("mouseup", handleMouseUp)
     document.addEventListener("mousemove", handleMouseMove)
-    document.body.addEventListener("drop", onDrop)
-    document.body.addEventListener("dragover", onDragOver)
+    document.addEventListener("drop", onDrop)
+    document.addEventListener("dragover", onDragOver)
 })
