@@ -89,32 +89,18 @@ function capitalise(str) {
 }
 
 function populateAggregationSidePanel(data) {
-    fetch("/api/activity/" + String(data.id) + "?database=" + DATABASE)
-        .then((response) => response.json())
-        .then((data) => {
-            document.getElementById("side-panel-aggregation").style.display = ""
-            document.getElementById("side-panel-data").style.display = "none"
 
-            document.getElementById("side-panel-title").textContent = data.name
-            document.getElementById("side-panel-aggr-parent").textContent = data['parent']
-            document.getElementById("side-panel-aggr-sector").textContent = data['sector']
-            document.getElementById("side-panel-aggr-section").textContent = data.section
-            document.getElementById("side-panel-aggr-type").textContent = data['type']
+    document.getElementById("side-panel-data").style.display = "none"
+    document.getElementById("side-panel-aggregation").style.display = ""
 
-            let otherClass = []
+    document.getElementById("side-panel-title").textContent = capitalise(data.name)
 
-            for (const classKey in data.classifications) {
-                if (classKey.toLowerCase().includes("isic")) {
-                    document.getElementById("side-panel-aggr-isic").textContent = data.classifications[classKey]
-                } else if (classKey.toLowerCase().includes("cpc")) {
-                    document.getElementById("side-panel-aggr-cpc").textContent = data.classifications[classKey]
-                } else if (classKey.toLowerCase().includes("hs2017")) {
-                    document.getElementById("side-panel-aggr-hs").textContent = data.classifications[classKey]
-                } else {
-                    otherClass.push(data.classifications[classKey])
-                }
-            }
-        })
+    if ("count" in data) {
+        document.getElementById("side-panel-first-tier").parentElement.style.display = "inline"
+        document.getElementById("side-panel-first-tier").textContent = String(data["count"])
+    } else {
+        document.getElementById("side-panel-first-tier").parentElement.style.display = "none"
+    }
 }
 
 function populateSidePanel(data) {
@@ -155,15 +141,19 @@ function showSidePanel(data) {
     sidePanel = document.getElementById("side-panel")
     sidePanel.classList.add("open")
 
+    if (data["id"] == 0) {
+        populateAggregationSidePanel(data)
+        return;
+    }
+
     fetch("/api/activity/" + String(data.id) + "?database=" + DATABASE)
         .then((response) => response.json())
-        .then((data) => {
-            console.log(data)
-            if (data["type"] == "aggregation" && "parent" in data) {
-                populateAggregationSidePanel(data);
-            } else {
-                populateSidePanel(data)
+        .then((fetchedData) => {
+            console.log(fetchedData)
+            if ("count" in data) {
+                fetchedData["count"] = data["count"]
             }
+            populateSidePanel(fetchedData)
         })
 }
 
@@ -452,9 +442,7 @@ function createFDTGraph(rootNode, viewbox) {
         })
 
         nodeEnter.on('click', (event, d) => {
-            if (d.data.id) {
-                showSidePanel(d.data)
-            }
+            showSidePanel(d.data)
         })
 
         nodeEnter.on('contextmenu', (ev, d) => {
