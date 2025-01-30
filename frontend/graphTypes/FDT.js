@@ -259,6 +259,18 @@ function getColorFromTag(tag) {
     return null
 }
 
+function getColorForLayer(layer) {
+    colors = [
+        "#8fd14d",
+        "#8eb9f6",
+        "#12CDD4",
+        "#414BB2",
+        "#ce5a5a"
+    ]
+
+    return colors[layer % colors.length]
+}
+
 function setIds(tree, start, depth, height) {
     if (tree == null)
         return start;
@@ -283,7 +295,8 @@ function setIds(tree, start, depth, height) {
         else if (tree.children[i].data.isAtBoundary) {
             tree.children[i]['color'] = generateColor()
         } else {
-            tree.children[i]['color'] = tree.color
+            //tree.children[i]['color'] = tree.color
+            tree.children[i]['color'] = getColorForLayer(tree.depth);
         }
         start = setIds(tree.children[i], start, depth, height)
     }
@@ -375,7 +388,8 @@ function createFDTGraph(rootNode, viewbox) {
         else if (d.data.isAtBoundary) {
             d.color = generateColor()
         } else {
-            d.color = color
+            //d.color = color
+            d.color = getColorForLayer(d.depth);
         }
     });
 
