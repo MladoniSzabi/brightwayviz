@@ -96,10 +96,22 @@ function populateAggregationSidePanel(data) {
     document.getElementById("side-panel-title").textContent = capitalise(data.name)
 
     if ("count" in data) {
-        document.getElementById("side-panel-first-tier").parentElement.style.display = "inline"
+        document.getElementById("side-panel-first-tier").style.display = "inline"
+        document.getElementById("side-panel-first-tier").previousElementSibling.style.display = "inline"
         document.getElementById("side-panel-first-tier").textContent = String(data["count"])
     } else {
-        document.getElementById("side-panel-first-tier").parentElement.style.display = "none"
+        document.getElementById("side-panel-first-tier").style.display = "none"
+        document.getElementById("side-panel-first-tier").previousElementSibling.style.display = "none"
+    }
+
+    if ("activities" in data) {
+        document.getElementById("side-panel-activities").style.display = "inline"
+        //document.getElementById("side-panel-activities").style.lineBreak = "anywhere"
+        document.getElementById("side-panel-activities").previousElementSibling.style.display = "inline"
+        document.getElementById("side-panel-activities").textContent = String(JSON.stringify(data["activities"])).replaceAll(",", ", ")
+    } else {
+        document.getElementById("side-panel-activities").style.display = "none"
+        document.getElementById("side-panel-activities").previousElementSibling.style.display = "none"
     }
 }
 
