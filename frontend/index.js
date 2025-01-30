@@ -214,7 +214,10 @@ function drag(simulation) {
 }
 
 function createGraph() {
-    svg = createFDTGraph(rootNode, viewbox)
+    if (GRAPH_TYPE == "tidyRadial")
+        svg = createRadialGraph(rootNode, viewbox)
+    else
+        svg = createFDTGraph(rootNode, viewbox)
     viewbox = svg.attr("viewBox").split(",").map((el) => Number(el))
     const svgNode = svg.node()
     svgNode.addEventListener("wheel", handleScroll)
@@ -277,6 +280,7 @@ function onDragOver(event) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    loadSideBar();
     const container = document.getElementById("page-content")
     container.addEventListener("draw-activity", async (e) => { await getActivity(e.detail), drawActivity() })
 

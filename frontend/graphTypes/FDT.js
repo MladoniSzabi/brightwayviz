@@ -261,11 +261,21 @@ function getColorFromTag(tag) {
 
 function getColorForLayer(layer) {
     colors = [
-        "#8fd14d",
-        "#8eb9f6",
-        "#12CDD4",
-        "#414BB2",
-        "#ce5a5a"
+        "#cc503e",
+        "#994e95",
+        "#666",
+        "#1d6996",
+        "#858B4F",
+        "#edad08",
+        "#72af48",
+        "#94346e",
+        "#660A8A",
+        "#38a6a5",
+        "#e17c06",
+        "#AF614B",
+        "#5f4690",
+        "#0d8554",
+        "#6f4070"
     ]
 
     return colors[layer % colors.length]
@@ -326,7 +336,8 @@ function createFDTGraph(rootNode, viewbox) {
     function wrap(text, width) {
         text.each(function () {
             let text = d3.select(this),
-                words = text.text().split(/\s+/).reverse(),
+                fullText = text.text(),
+                words = fullText.split(/\s+/).reverse(),
                 word,
                 line = [],
                 lineHeight = 1.2, // ems
@@ -334,7 +345,12 @@ function createFDTGraph(rootNode, viewbox) {
                 lines = [];
             text.text(null).attr("x", 0).attr("y", 0).attr("font-size", "16px")
 
-            let textLength = words.join(" ").length
+            // if (fullText.includes(":")) {
+            //     text.append("tspan").attr("x", 0).attr("y", 0).text(fullText.slice(0, fullText.indexOf(":")))
+            //     return;
+            // }
+
+            let textLength = fullText.length
             let fontSize = 16
             if (textLength >= 110) {
                 fontSize = 10
@@ -357,6 +373,13 @@ function createFDTGraph(rootNode, viewbox) {
             if (line.length > 0) {
                 lines.push(line.join(" "))
             }
+
+            console.log(lines, lines.length)
+            if (lines.length >= 11) {
+                lines = lines.slice(0, 10)
+                lines.push("...")
+            }
+            console.log(lines, lines.length)
 
             let start = -(lines.length - 1) / 2
             for (let i = 0; i < lines.length; i += 1) {

@@ -4,25 +4,49 @@
 <head>
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=close,zoom_in,zoom_out" />
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=close,menu,zoom_in,zoom_out" />
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const DATABASE = urlParams.get("database")
-        console.log(DATABASE)
+        var DATABASE = "current"
+        var GRAPH_TYPE = "fdt"
+
+
     </script>
+    <script src="sidebar.js"></script>
     <script src="d3.js"></script>
     <script src="contextMenu.js"></script>
     <script src="graphTypes/FDT.js"></script>
+    <script src="graphTypes/RadialTree.js"></script>
     <script src="pagination.js"></script>
     <script src="index.js"></script>
 </head>
 
 <body>
-    <div id="databases">
-        <p>Databases:</p>
-        <a href="?database=original">Unaggregated</a>
-        <a href="/?database=current">Aggregated</a>
-        <a href="/?database=new_candidate">New Candidate</a>
+    <div id="sidebar" class="close">
+        <p>
+            <span id="sidebar-close" class="material-symbols-outlined">
+                close
+            </span>
+        </p>
+        <p>
+            <span id="sidebar-open" class="material-symbols-outlined">
+                menu
+            </span>
+        </p>
+        <div id="sidebar-database">
+            <p>Pick your database</p>
+            <select>
+                <option value="current">Release version</option>
+            </select>
+        </div>
+
+        <div id="sidebar-graph">
+            <p>Pick your desired graph</p>
+            <select>
+                <option value="fdt">Force Directed Tree</option>
+                <option value="tidyRadial">Tidy Radial Tree</option>
+            </select>
+        </div>
     </div>
     <h2 id="activities-heading">Database Search</h2>
     <div id="activities">

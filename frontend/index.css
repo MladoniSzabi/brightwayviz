@@ -282,3 +282,48 @@ span.zoom {
         transform: rotate(360);
     }
 }
+
+#sidebar {
+    width: 20em;
+    height: calc(100vh - 1em);
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+    border: solid 1px black;
+    border-radius: 0px 20px 20px 0px;
+    padding: 0.5em;
+    transition: transform 0.2s;
+    transform: translate(0);
+    z-index: 1;
+}
+
+#sidebar.close {
+    transform: translate(-100%);
+}
+
+#sidebar #sidebar-open {
+    display: none;
+    transition: display 0s linear 0.2s;
+}
+
+#sidebar.close #sidebar-open {
+    display: block;
+}
+
+#sidebar-close {
+    display: flex;
+    justify-content: end;
+    cursor: pointer;
+    user-select: none;
+}
+
+#sidebar-open {
+    position: absolute;
+    left: calc(100% + 0.5em);
+    font-size: 32px;
+    top: 1em;
+    font-weight: bolder;
+    cursor: pointer;
+    user-select: none;
+}
