@@ -1,4 +1,9 @@
 function createRadialGraph(rootNode, viewbox) {
+
+    function handleClick(event, d) {
+        showSidePanel(d.data)
+    }
+
     getRand = sfc32(seedgen(), seedgen(), seedgen(), seedgen());
 
     function wrap(text, width) {
@@ -117,6 +122,7 @@ function createRadialGraph(rootNode, viewbox) {
         .attr("stroke", d => d.data.childCount == 0 ? "#fff" : "#000")
         .attr("stroke-width", 3)
         .attr("r", d => 80)
+        .on('click', handleClick)
 
     // Append labels.
     svg.append("g")
@@ -133,7 +139,8 @@ function createRadialGraph(rootNode, viewbox) {
         .attr("dy", "0.31em")
         .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
         .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 180}) translate(${(d.depth) * radius} ,0) rotate(${(d.x >= Math.PI / 2 && d.x <= 3 * Math.PI / 2) ? 0 : 180}) translate(0, ${d.depth == 0 ? 150 : 0})`)
-        .call(wrap, 10);
+        .call(wrap, 10)
+        .on('click', handleClick)
 
     return svg;
 }
