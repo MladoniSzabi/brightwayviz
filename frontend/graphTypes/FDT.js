@@ -406,7 +406,10 @@ function createFDTGraph(rootNode, viewbox) {
             d.color = d.data.colour
         }
         else if (d.data.tag && getColorFromTag(d.data.tag)) {
-            d.color = getColorFromTag(d.data.tag)
+            if (d.depth == 0)
+                d.color = "#983334"
+            else
+                d.color = getColorFromTag(d.data.tag)
         }
         else if (d.data.isAtBoundary) {
             d.color = generateColor()

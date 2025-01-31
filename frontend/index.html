@@ -9,6 +9,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         var DATABASE = "current"
         var GRAPH_TYPE = "fdt"
+        var TIDY_TREE_RADIUS = 800
 
 
     </script>
@@ -46,6 +47,11 @@
                 <option value="fdt">Force Directed Tree</option>
                 <option value="tidyRadial">Tidy Radial Tree</option>
             </select>
+        </div>
+
+        <div id="sidebar-radius">
+            <p>Pick the radius for the tidy radial tree</p>
+            <input type="number" min="100" step="50" />
         </div>
     </div>
     <h2 id="activities-heading">Database Search</h2>
@@ -914,7 +920,8 @@
             concentrates)</option>
         <option>15120: Marble and other calcareous monumental or building stone</option>
         <option>15130: Granite, sandstone and other monumental or building stone</option>
-        <option>15200: Gypsum; anhydrite; limestone flux; limestone and other calcareous stone, of a kind used for the
+        <option>15200: Gypsum; anhydrite; limestone flux; limestone and other calcareous stone, of a kind used for
+            the
             manufacture of[…]</option>
         <option>15310: Natural sands</option>
         <option>15320: Pebbles, gravel, broken or crushed stone, macadam; granules, chippings and powder of stone
@@ -928,7 +935,8 @@
         <option>16330: Chalk and dolomite</option>
         <option>16390: Other minerals n.e.c.</option>
         <option>17100: Electrical energy</option>
-        <option>17200: Coal gas, water gas, producer gas and similar gases, other than petroleum gases and other gaseous
+        <option>17200: Coal gas, water gas, producer gas and similar gases, other than petroleum gases and other
+            gaseous
             hydrocarbons</option>
         <option>17300: Steam and hot water</option>
         <option>18000: Natural water</option>
@@ -961,7 +969,8 @@
         <option>23110: Wheat and meslin flour</option>
         <option>23120: Other cereal flours</option>
         <option>23130: Groats, meal and pellets of wheat and other cereals</option>
-        <option>23210: Glucose and glucose syrup; fructose and fructose syrup; lactose and lactose syrup; invert sugar;
+        <option>23210: Glucose and glucose syrup; fructose and fructose syrup; lactose and lactose syrup; invert
+            sugar;
             sugars and su[…]</option>
         <option>23220: Starches; inulin; wheat gluten; dextrins and other modified starches</option>
         <option>23319: Preparations used in animal feeding n.e.c.</option>
@@ -972,20 +981,25 @@
         <option>23999: Other food products n.e.c.</option>
         <option>24490: Other non-alcoholic caloric beverages</option>
         <option>26110: Raw silk (not thrown)</option>
-        <option>26190: Other vegetable textile fibres, processed but not spun; tow and waste of these fibres</option>
+        <option>26190: Other vegetable textile fibres, processed but not spun; tow and waste of these fibres
+        </option>
         <option>26220: Artificial staple fibres, carded, combed or otherwise processed for spinning</option>
         <option>26360: Cotton yarn (other than sewing thread), containing 85% or more by weight of cotton</option>
-        <option>26380: Yarn of vegetable textile fibres other than cotton (including flax, jute, coir and true hemp);
+        <option>26380: Yarn of vegetable textile fibres other than cotton (including flax, jute, coir and true
+            hemp);
             paper yarn</option>
         <option>26510: Woven fabrics of silk or of silk waste</option>
-        <option>26570: Woven fabrics of jute and other textile bast fibres (except flax, true hemp and ramie)</option>
-        <option>26620: Woven fabrics of cotton, containing 85% or more by weight of cotton, weighing more than 200 g/m2
+        <option>26570: Woven fabrics of jute and other textile bast fibres (except flax, true hemp and ramie)
+        </option>
+        <option>26620: Woven fabrics of cotton, containing 85% or more by weight of cotton, weighing more than 200
+            g/m2
         </option>
         <option>26710: Woven fabrics of man-made filament yarn, obtained from high tenacity yarn of nylon or other
             polyamides, of pol[…]</option>
         <option>27922: Nonwovens</option>
         <option>28190: Other knitted or crocheted fabrics</option>
-        <option>31101: Wood, sawn or chipped lengthwise, sliced or peeled, of a thickness exceeding 6 mm, of coniferous
+        <option>31101: Wood, sawn or chipped lengthwise, sliced or peeled, of a thickness exceeding 6 mm, of
+            coniferous
             wood </option>
         <option>31102: Wood, sawn or chipped lengthwise, sliced or peeled, of a thickness exceeding 6 mm, of
             non-coniferous wood </option>
@@ -995,7 +1009,8 @@
             parquet flooring, […]</option>
         <option>31220: Wood wool; wood flour</option>
         <option>31230: Wood in chips or particles</option>
-        <option>313: Wood in the rough, treated with paint, stains, creosote or other preservatives; railway or tramway
+        <option>313: Wood in the rough, treated with paint, stains, creosote or other preservatives; railway or
+            tramway
             sleepers (cro[…]</option>
         <option>3142: Other plywood, veneered panels and similar laminated wood, except of bamboo</option>
         <option>31431: Particle board</option>
@@ -1006,19 +1021,22 @@
         <option>31450: Plywood, veneer panels and similar laminated wood of bamboo</option>
         <option>31600: Builders' joinery and carpentry of wood (including cellular wood panels, assembled parquet
             panels, shingles an[…]</option>
-        <option>31700: Packing cases, boxes, crates, drums and similar packings, of wood; cable-drums of wood; pallets,
+        <option>31700: Packing cases, boxes, crates, drums and similar packings, of wood; cable-drums of wood;
+            pallets,
             box pallets a[…]</option>
         <option>31921: Natural cork, debacked or roughly squared, or in blocks, plates, sheets or strip; crushed,
             granulated or groun[…]</option>
         <option>32112: Chemical wood pulp, other than dissolving grades</option>
-        <option>32113: Mechanical wood pulp; semi-chemical wood pulp; pulps of fibrous cellulosic material other than
+        <option>32113: Mechanical wood pulp; semi-chemical wood pulp; pulps of fibrous cellulosic material other
+            than
             wood</option>
         <option>32121: Newsprint</option>
         <option>32129: Other uncoated paper and paperboard, of a kind used for writing, printing or other graphic
             purposes, and punch[…]</option>
         <option>32133: Other uncoated kraft paper and paperboard; sack kraft paper, creped or crinkled</option>
         <option>32143: Paper and paperboard coated with kaolin or with other inorganic substances</option>
-        <option>32149: Other paper and paperboard, cellulose wadding and webs of cellulose fibres, coated, impregnated,
+        <option>32149: Other paper and paperboard, cellulose wadding and webs of cellulose fibres, coated,
+            impregnated,
             gummed or adh[…]</option>
         <option>32151: Corrugated paper and paperboard</option>
         <option>32153: Cartons, boxes, cases, record sleeves and other packing containers (except bags) of paper,
@@ -1037,19 +1055,23 @@
         <option>33380: Lubricants</option>
         <option>3338: Lubricants</option>
         <option>3339: Other petroleum oils n.e.c.</option>
-        <option>333: Petroleum oils and oils obtained from bituminous materials, other than crude; preparations n.e.c.
+        <option>333: Petroleum oils and oils obtained from bituminous materials, other than crude; preparations
+            n.e.c.
             containing by […]</option>
         <option>33410: Propane and butanes, liquefied</option>
         <option>33421: Ethylene, propylene, butylene, butadiene</option>
         <option>33429: Other petroleum gases or gaseous hydrocarbons, except natural gas</option>
-        <option>3342: Ethylene, propylene, butylene, butadiene and other petroleum gases or gaseous hydrocarbons, except
+        <option>3342: Ethylene, propylene, butylene, butadiene and other petroleum gases or gaseous hydrocarbons,
+            except
             natural gas</option>
         <option>334: Petroleum gases and other gaseous hydrocarbons, except natural gas</option>
-        <option>33500: Petroleum jelly; paraffin wax, micro- crystalline petroleum wax, slack wax, ozokerite, lignite
+        <option>33500: Petroleum jelly; paraffin wax, micro- crystalline petroleum wax, slack wax, ozokerite,
+            lignite
             wax, peat wax, […]</option>
         <option>33620: Uranium enriched in U235 and its compounds; plutonium and its compounds; alloys, dispersions,
             ceramic products[…]</option>
-        <option>33690: Other radioactive elements and isotopes and compounds; alloys, dispersions, ceramic products and
+        <option>33690: Other radioactive elements and isotopes and compounds; alloys, dispersions, ceramic products
+            and
             mixtures cont[…]</option>
         <option>33710: Fuel elements (cartridges), non-irradiated, for nuclear reactors</option>
         <option>33720: Spent (irradiated) fuel elements (cartridges) of nuclear reactors</option>
@@ -1059,9 +1081,11 @@
         <option>34131: Ethyl alcohol and other spirits, denatured, of any strength</option>
         <option>34139: Other alcohols, phenols, phenol-alcohols, and their halogenated, sulphonated, nitrated or
             nitrosated derivativ[…]</option>
-        <option>34140: Carboxylic acids and their anhydrides, halides, peroxides and peroxyacids and their halogenated,
+        <option>34140: Carboxylic acids and their anhydrides, halides, peroxides and peroxyacids and their
+            halogenated,
             sulphonated, […]</option>
-        <option>34150: Amine-function compounds; oxygen-function amino-compounds, except lysine and its esters and salts
+        <option>34150: Amine-function compounds; oxygen-function amino-compounds, except lysine and its esters and
+            salts
             thereof and […]</option>
         <option>34160: Organo-sulphur compounds and other organo-inorganic compounds; heterocyclic compounds n.e.c.;
             nucleic acids an[…]</option>
@@ -1074,36 +1098,43 @@
             non-metals n.e.c.</option>
         <option>34220: Zinc oxide; zinc peroxide; chromium oxides and hydroxides; manganese oxides; iron oxides and
             hydroxides; earth[…]</option>
-        <option>34231: Chemical elements n.e.c.; inorganic acids except phosphoric, nitric and sulphonitric; inorganic
+        <option>34231: Chemical elements n.e.c.; inorganic acids except phosphoric, nitric and sulphonitric;
+            inorganic
             oxygen compoun[…]</option>
         <option>34232: Phosphoric acid</option>
         <option>34233: Nitric acid, sulphonitric acids</option>
-        <option>34240: Phosphates of triammonium; salts and peroxysalts of inorganic acids and metals n.e.c.</option>
-        <option>34250: Salts of oxometallic or peroxometallic acids; colloidal precious metals and compounds thereof;
+        <option>34240: Phosphates of triammonium; salts and peroxysalts of inorganic acids and metals n.e.c.
+        </option>
+        <option>34250: Salts of oxometallic or peroxometallic acids; colloidal precious metals and compounds
+            thereof;
             inorganic and o[…]</option>
         <option>34260: Isotopes n.e.c. and compounds thereof (including heavy water)</option>
-        <option>34270: Cyanides, cyanide oxides and complex cyanides; fulminates, cyanates and thiocyanates; silicates;
+        <option>34270: Cyanides, cyanide oxides and complex cyanides; fulminates, cyanates and thiocyanates;
+            silicates;
             borates; perb[…]</option>
         <option>34280: Hydrogen peroxide; phosphides; carbides; hydrides, nitrides, azides, silicides and borides
         </option>
         <option>34290: Compounds of rare earth metals, of yttrium or of scandium</option>
         <option>3429: Compounds of rare earth metals, of yttrium or of scandium</option>
         <option>342: Basic inorganic chemicals n.e.c.</option>
-        <option>34310: Synthetic organic colouring matter and preparations based thereon; synthetic organic products of
+        <option>34310: Synthetic organic colouring matter and preparations based thereon; synthetic organic products
+            of
             a kind used a[…]</option>
         <option>34400: Activated natural mineral products; animal black; tall oil; terpenic oils produced by the
             treatment of conifer[…]</option>
         <option>34510: Wood charcoal</option>
         <option>34520: Sulphur, except sublimed sulphur, precipitated sulphur and colloidal sulphur</option>
         <option>34530: Roasted iron pyrites</option>
-        <option>34540: Oils and other products of the distillation of high temperature coal tar, and similar products;
+        <option>34540: Oils and other products of the distillation of high temperature coal tar, and similar
+            products;
             pitch and pitc[…]</option>
         <option>34570: Glycerol</option>
         <option>34611: Urea</option>
         <option>34612: Ammonium sulphate</option>
         <option>34613: Ammonium nitrate</option>
         <option>34614: Double salts and mixtures of calcium nitrate and ammonium nitrate</option>
-        <option>34615: Mixtures of ammonium nitrate with calcium carbonate or other inorganic non-fertilizing substances
+        <option>34615: Mixtures of ammonium nitrate with calcium carbonate or other inorganic non-fertilizing
+            substances
         </option>
         <option>34619: Other nitrogenous fertilizers and mixtures, n.e.c.</option>
         <option>3461: Mineral or chemical fertilizers, nitrogenous</option>
@@ -1133,7 +1164,8 @@
         <option>34710: Polymers of ethylene, in primary forms</option>
         <option>34720: Polymers of styrene, in primary forms</option>
         <option>34730: Polymers of vinyl chloride or other halogenated olefins, in primary forms</option>
-        <option>34740: Polyacetals, other polyethers and epoxide resins, in primary forms; polycarbonates, alkyd resins,
+        <option>34740: Polyacetals, other polyethers and epoxide resins, in primary forms; polycarbonates, alkyd
+            resins,
             polyallyl es[…]</option>
         <option>34790: Other plastics in primary forms; ion exchangers</option>
         <option>347: Plastics in primary forms</option>
@@ -1142,13 +1174,16 @@
         <option>34: Basic chemicals</option>
         <option>35110: Paints and varnishes and related products</option>
         <option>35130: Printing ink</option>
-        <option>35230: Lactones n.e.c., heterocyclic compounds with nitrogen hetero-atom(s) only, containing an unfused
+        <option>35230: Lactones n.e.c., heterocyclic compounds with nitrogen hetero-atom(s) only, containing an
+            unfused
             pyrazole ring[…]</option>
         <option>35240: Sugars, chemically pure n.e.c.; sugar ethers and sugar esters and their salts n.e.c.</option>
-        <option>35250: Provitamins, vitamins and hormones; glycosides and vegetable alkaloids and their salts, ethers,
+        <option>35250: Provitamins, vitamins and hormones; glycosides and vegetable alkaloids and their salts,
+            ethers,
             esters and oth[…]</option>
         <option>35310: Organic surface active agents, except soap</option>
-        <option>35321: Soap; organic surface-active products and preparations for use as soap; paper, wadding, felt and
+        <option>35321: Soap; organic surface-active products and preparations for use as soap; paper, wadding, felt
+            and
             nonwovens, im[…]</option>
         <option>35322: Detergents and washing preparations</option>
         <option>35450: Prepared explosives; safety fuses; detonating fuses; percussion or detonating caps; igniters;
@@ -1165,65 +1200,80 @@
         <option>36410: Sacks and bags, of plastics</option>
         <option>36490: Other articles for the conveyance or packing of goods, of plastics; stoppers, lids, caps and
             other closures, o[…]</option>
-        <option>36920: Self-adhesive plates, sheets, film, foil, tape, strip and other flat shapes, of plastics</option>
+        <option>36920: Self-adhesive plates, sheets, film, foil, tape, strip and other flat shapes, of plastics
+        </option>
         <option>36990: Articles of plastics n.e.c.</option>
-        <option>37111: Glass in the mass, in balls (except microspheres), rods or tubes, unworked; waste and scrap of
+        <option>37111: Glass in the mass, in balls (except microspheres), rods or tubes, unworked; waste and scrap
+            of
             glass</option>
         <option>37114: Glass in sheets, bent, edge-worked, engraved, drilled, enamelled or otherwise worked, but not
             framed, etc.</option>
         <option>37116: Glass mirrors; multiple walled insulating units of glass</option>
-        <option>37117: Paving blocks, bricks, tiles and other articles of pressed or moulded glass, of a kind used for
+        <option>37117: Paving blocks, bricks, tiles and other articles of pressed or moulded glass, of a kind used
+            for
             building or co[…]</option>
-        <option>37129: Voiles, webs, mats, mattresses, boards and other articles of glass fibres, except woven fabrics
+        <option>37129: Voiles, webs, mats, mattresses, boards and other articles of glass fibres, except woven
+            fabrics
         </option>
         <option>3712: Glass fibres and articles thereof, except woven fabrics</option>
         <option>37191: Bottles, jars, phials and other containers, of glass, of a kind used for the conveyance or
             packing of goods, e[…]</option>
-        <option>37192: Glass envelopes, open, and glass parts thereof, for electric lamps, cathode-ray tubes or the like
+        <option>37192: Glass envelopes, open, and glass parts thereof, for electric lamps, cathode-ray tubes or the
+            like
         </option>
         <option>37195: Laboratory, hygienic or pharmaceutical glassware; ampoules of glass</option>
-        <option>37199: Articles of glass n.e.c. (including glass inners for vacuum flasks, signalling glassware, glass
+        <option>37199: Articles of glass n.e.c. (including glass inners for vacuum flasks, signalling glassware,
+            glass
             cubes for mosa[…]</option>
-        <option>37210: Ceramic sinks, baths, water closet pans, flushing cisterns and similar sanitary fixtures</option>
+        <option>37210: Ceramic sinks, baths, water closet pans, flushing cisterns and similar sanitary fixtures
+        </option>
         <option>37310: Bricks, blocks, tiles and other ceramic goods of siliceous earths</option>
         <option>3731: Bricks, blocks, tiles and other ceramic goods of siliceous earths</option>
         <option>37330: Refractory cements, mortars, concretes and similar compositions n.e.c.</option>
         <option>3733: Refractory cements, mortars, concretes and similar compositions n.e.c.</option>
-        <option>37350: Non-refractory ceramic building bricks, flooring blocks, support or filler tiles, roofing tiles,
+        <option>37350: Non-refractory ceramic building bricks, flooring blocks, support or filler tiles, roofing
+            tiles,
             chimney-pots,[…]</option>
         <option>373: Refractory products and structural non-refractory clay products</option>
         <option>37410: Plasters</option>
         <option>3741: Plasters</option>
         <option>37420: Quicklime, slaked lime and hydraulic lime</option>
         <option>37430: Cement clinkers</option>
-        <option>37440: Portland cement, aluminous cement, slag cement and similar hydraulic cements, except in the form
+        <option>37440: Portland cement, aluminous cement, slag cement and similar hydraulic cements, except in the
+            form
             of clinkers</option>
-        <option>3744: Portland cement, aluminous cement, slag cement and similar hydraulic cements, except in the form
+        <option>3744: Portland cement, aluminous cement, slag cement and similar hydraulic cements, except in the
+            form
             of clinkers</option>
         <option>37510: Non-refractory mortars and concretes</option>
         <option>3751: Non-refractory mortars and concretes</option>
         <option>37530: Articles of plaster or of compositions based on plaster</option>
-        <option>37540: Tiles, flagstones, bricks and similar articles, of cement, concrete or artificial stone</option>
+        <option>37540: Tiles, flagstones, bricks and similar articles, of cement, concrete or artificial stone
+        </option>
         <option>37570: Articles of asbestos-cement, cellulose fibre-cement or the like</option>
         <option>37690: Other worked monumental or building stone and articles thereof; other artificially coloured
             granules, chipping[…]</option>
         <option>37930: Articles of asphalt or of similar material</option>
-        <option>37940: Bituminous mixtures based on natural and artificial stone materials and bitumen, natural asphalt
+        <option>37940: Bituminous mixtures based on natural and artificial stone materials and bitumen, natural
+            asphalt
             or related su[…]</option>
         <option>37950: Artificial graphite; colloidal or semi-colloidal graphite; preparations based on graphite or
             other carbon in t[…]</option>
-        <option>37990: Non-metallic mineral products n.e.c. (including mineral wool, expanded mineral materials, worked
+        <option>37990: Non-metallic mineral products n.e.c. (including mineral wool, expanded mineral materials,
+            worked
             mica, article[…]</option>
         <option>38140: Other furniture n.e.c.</option>
         <option>3815: Mattress supports; mattresses, fitted with springs or stuffed or internally fitted with any
             material or of cell[…]</option>
-        <option>3845: Fishing rods and other line fishing tackle; fish landing nets, butterfly nets and similar nets;
+        <option>3845: Fishing rods and other line fishing tackle; fish landing nets, butterfly nets and similar
+            nets;
             decoy "birds" a[…]</option>
         <option>38703: Prefabricated buildings, of plastics</option>
         <option>3870: Prefabricated buildings</option>
         <option>39110: Raw offal, inedible (including pigs' bristles, horse hair, animal guts, bird skins, feathers,
             bones and ivory)</option>
-        <option>39120: Bran and other residues from the working of cereals or legumes; vegetable materials and vegetable
+        <option>39120: Bran and other residues from the working of cereals or legumes; vegetable materials and
+            vegetable
             waste, veget[…]</option>
         <option>39141: Bagasse</option>
         <option>39149: Beet-pulp and other waste of sugar manufacture</option>
@@ -1232,7 +1282,8 @@
         <option>39214: Cotton waste, except garnetted stock</option>
         <option>39216: Waste of man-made fibres</option>
         <option>39217: Worn clothing and other worn textile articles</option>
-        <option>39230: Residual lyes from the manufacture of wood pulp, including lignin sulphonates, but excluding tall
+        <option>39230: Residual lyes from the manufacture of wood pulp, including lignin sulphonates, but excluding
+            tall
             oil</option>
         <option>39240: Waste and scrap of paper or paperboard</option>
         <option>39250: Waste, parings and scrap of rubber (except hard rubber) and powders and granules obtained
@@ -1281,21 +1332,27 @@
         <option>41113: Ferro-chromium</option>
         <option>41114: Ferro-nickel</option>
         <option>41115: Other ferro-alloys</option>
-        <option>41116: Ferrous products obtained by direct reduction of iron ore and other spongy ferrous products, in
+        <option>41116: Ferrous products obtained by direct reduction of iron ore and other spongy ferrous products,
+            in
             lumps, pellets[…]</option>
         <option>41117: Granules and powders, of pig iron and spiegeleisen, or steel</option>
-        <option>41121: Non-alloy steel in ingots or other primary forms, and semi-finished products of non-alloy steel
+        <option>41121: Non-alloy steel in ingots or other primary forms, and semi-finished products of non-alloy
+            steel
         </option>
-        <option>41122: Alloy steel in ingots or other primary forms and semi-finished products of alloy steel</option>
+        <option>41122: Alloy steel in ingots or other primary forms and semi-finished products of alloy steel
+        </option>
         <option>4121: Flat-rolled products of steel, not further worked than hot-rolled</option>
         <option>4124: Bars and rods, hot-rolled, of iron or steel</option>
         <option>41283: Other tubes and pipes, of circular cross-section, seamless</option>
         <option>4128: Tubes, pipes and hollow profiles, of steel</option>
-        <option>41310: Silver (including silver plated with gold or platinum), unwrought or in semi-manufactured forms,
+        <option>41310: Silver (including silver plated with gold or platinum), unwrought or in semi-manufactured
+            forms,
             or in powder […]</option>
-        <option>41320: Gold (including gold plated with platinum), unwrought or in semi-manufactured forms, or in powder
+        <option>41320: Gold (including gold plated with platinum), unwrought or in semi-manufactured forms, or in
+            powder
             form</option>
-        <option>4132: Gold (including gold plated with platinum), unwrought or in semi-manufactured forms, or in powder
+        <option>4132: Gold (including gold plated with platinum), unwrought or in semi-manufactured forms, or in
+            powder
             form</option>
         <option>41330: Platinum, unwrought or in semi-manufactured forms, or in powder form</option>
         <option>41350: Base metals clad with silver, and base metals, silver or gold clad with platinum, not further
@@ -1317,16 +1374,20 @@
             gallium, hafnium, […]</option>
         <option>41602: Tungsten, molybdenum, tantalum, magnesium, cobalt, cadmium, titanium, zirconium, beryllium,
             gallium, hafnium, […]</option>
-        <option>41603: Bismuth, antimony, manganese, chromium and articles thereof; including waste and scrap of bismuth
+        <option>41603: Bismuth, antimony, manganese, chromium and articles thereof; including waste and scrap of
+            bismuth
             or manganese</option>
-        <option>42120: Doors, windows and their frames and thresholds for doors, of iron, steel or aluminium</option>
+        <option>42120: Doors, windows and their frames and thresholds for doors, of iron, steel or aluminium
+        </option>
         <option>42190: Other structures (except prefabricated buildings) and parts of structures, of iron, steel or
             aluminium; plates[…]</option>
-        <option>42210: Reservoirs, tanks, vats and similar containers (other than for compressed or liquefied gas), of
+        <option>42210: Reservoirs, tanks, vats and similar containers (other than for compressed or liquefied gas),
+            of
             iron, steel or[…]</option>
         <option>42220: Containers for compressed or liquefied gas, of iron, steel or aluminium</option>
         <option>42342: Parts of the goods of subclasses 42320 and 42330</option>
-        <option>42950: Wire, rods, tubes, plates, electrodes and similar products, of base metal or of metal carbides,
+        <option>42950: Wire, rods, tubes, plates, electrodes and similar products, of base metal or of metal
+            carbides,
             coated or core[…]</option>
         <option>43110: Internal combustion piston engines, other than for motor vehicles and aircraft</option>
         <option>4312: Internal combustion engines of a kind used for motor vehicles</option>
@@ -1335,15 +1396,19 @@
         <option>43230: Air or vacuum pumps; air or other gas compressors</option>
         <option>43410: Furnace burners for liquid fuel, for pulverized solid fuel or for gas; mechanical stokers,
             mechanical grates, […]</option>
-        <option>43420: Industrial or laboratory furnaces and ovens, except non-electric bakery ovens; other industrial
+        <option>43420: Industrial or laboratory furnaces and ovens, except non-electric bakery ovens; other
+            industrial
             or laboratory […]</option>
-        <option>43430: Parts for the goods of subclasses 43410 and 43420; parts of non-electric bakery ovens</option>
-        <option>43550: Pneumatic and other continuous action elevators and conveyors, for goods or materials</option>
+        <option>43430: Parts for the goods of subclasses 43410 and 43420; parts of non-electric bakery ovens
+        </option>
+        <option>43550: Pneumatic and other continuous action elevators and conveyors, for goods or materials
+        </option>
         <option>43911: Producer gas or water gas generators; acetylene gas generators and similar water process gas
             generators; disti[…]</option>
         <option>43912: Air-conditioning machines</option>
         <option>43913: Refrigerating and freezing equipment and heat pumps, except household type equipment</option>
-        <option>43914: Filtering or purifying machinery and apparatus, for liquids or gases, except oil filters, petrol
+        <option>43914: Filtering or purifying machinery and apparatus, for liquids or gases, except oil filters,
+            petrol
             filters and a[…]</option>
         <option>4391: Gas generators; distilling plant; air-conditioning and refrigerating equipment; filtering
             machinery</option>
@@ -1360,17 +1425,21 @@
             finishing metal, si[…]</option>
         <option>4421: Machine-tools for working metal; machine-tools for working any material by laser or similar
             process</option>
-        <option>44251: Tool holders, self-opening dieheads, work holders, dividing heads and other special attachments
+        <option>44251: Tool holders, self-opening dieheads, work holders, dividing heads and other special
+            attachments
             for machine-to[…]</option>
-        <option>44310: Converters, ladles, ingot moulds and casting machines, of a kind used in metallurgy or in metal
+        <option>44310: Converters, ladles, ingot moulds and casting machines, of a kind used in metallurgy or in
+            metal
             foundries; met[…]</option>
-        <option>44427: Mechanical shovels, excavators and shovel loaders, except front-end shovel loaders and machinery
+        <option>44427: Mechanical shovels, excavators and shovel loaders, except front-end shovel loaders and
+            machinery
             with a 360-de[…]</option>
         <option>44440: Machinery for sorting, screening, separating, washing, crushing, grinding, mixing or kneading
             earth, stone, or[…]</option>
         <option>444: Machinery for mining, quarrying and construction, and parts thereof</option>
         <option>44811: Refrigerators and freezers, household type, electric or non-electric</option>
-        <option>44812: Dishwashing machines and clothes or linen washing or drying machines, household type, electric or
+        <option>44812: Dishwashing machines and clothes or linen washing or drying machines, household type,
+            electric or
             non-electric</option>
         <option>44815: Fans and ventilating or recycling hoods of the domestic type</option>
         <option>44816: Other small electric domestic appliances (including vacuum cleaners, kitchen waste disposers,
@@ -1386,7 +1455,8 @@
         <option>4492: Parts n.e.c. for special-purpose machinery</option>
         <option>45220: Portable automatic data processing machines weighing not more than 10 kg, such as laptops,
             notebooks and sub-n[…]</option>
-        <option>45230: Automatic data processing machines, comprising in the same housing at least a central processing
+        <option>45230: Automatic data processing machines, comprising in the same housing at least a central
+            processing
             unit and an i[…]</option>
         <option>45261: Input peripherals (keyboard, joystick, mouse etc.)</option>
         <option>45264: Laser printers used with data processing machines</option>
@@ -1400,7 +1470,8 @@
         <option>46131: Parts of electric motors, generators and the like</option>
         <option>46132: Parts of electrical transformers, static converters and inductors</option>
         <option>4613: Parts for the goods of classes 4611 and 4612</option>
-        <option>46211: Electrical apparatus for switching or protecting electrical circuits, or for making connexions to
+        <option>46211: Electrical apparatus for switching or protecting electrical circuits, or for making
+            connexions to
             or in electr[…]</option>
         <option>46220: Parts of electricity distribution or control apparatus</option>
         <option>46310: Insulated winding wire</option>
@@ -1414,21 +1485,26 @@
         <option>46910: Electrical ignition or starting equipment of a kind used for internal combustion engines;
             generators and cut-o[…]</option>
         <option>46932: Permanent ceramic or ferrite magnets</option>
-        <option>46950: Carbon electrodes, carbon brushes, lamp carbons, battery carbons and other articles of graphite
+        <option>46950: Carbon electrodes, carbon brushes, lamp carbons, battery carbons and other articles of
+            graphite
             or other carbo[…]</option>
-        <option>46960: Parts for the goods of subclasses 46910, 46921 and 46929; electrical parts n.e.c. of machinery or
+        <option>46960: Parts for the goods of subclasses 46910, 46921 and 46929; electrical parts n.e.c. of
+            machinery or
             apparatus</option>
         <option>47110: Electrical capacitors</option>
         <option>47120: Electrical resistors (except heating resistors)</option>
         <option>47130: Printed circuits</option>
-        <option>47140: Thermionic, cold cathode or photo-cathode valves and tubes (including cathode ray tubes)</option>
-        <option>47150: Diodes, transistors and similar semi-conductor devices; photosensitive semi-conductor devices;
+        <option>47140: Thermionic, cold cathode or photo-cathode valves and tubes (including cathode ray tubes)
+        </option>
+        <option>47150: Diodes, transistors and similar semi-conductor devices; photosensitive semi-conductor
+            devices;
             light emitting […]</option>
         <option>47160: Electronic integrated circuits</option>
         <option>47173: Parts for the goods of subclasses 47140 to 47160</option>
         <option>471: Electronic valves and tubes; electronic components; parts thereof</option>
         <option>47222: Telephones for cellular networks or for other wireless networks</option>
-        <option>47223: Other telephone sets and apparatus for transmission or reception of voice, images or other data,
+        <option>47223: Other telephone sets and apparatus for transmission or reception of voice, images or other
+            data,
             including app[…]</option>
         <option>47315: Monitors and projectors, principally used in an automatic data processing system</option>
         <option>47401: Parts for the goods of subclasses 47221 to 47223</option>
@@ -1439,14 +1515,17 @@
             public-transport[…]</option>
         <option>49114: Motor vehicles n.e.c. for the transport of goods</option>
         <option>49119: Special-purpose motor vehicles n.e.c.</option>
-        <option>49129: Other parts and accessories n.e.c. of motor vehicles (including brakes, gear boxes, axles, road
+        <option>49129: Other parts and accessories n.e.c. of motor vehicles (including brakes, gear boxes, axles,
+            road
             wheels, suspen[…]</option>
         <option>49221: Containers specially designed and equipped for carriage by one or more modes of transport
         </option>
         <option>49312: Tankers (ships)</option>
-        <option>49314: Other vessels for the transport of goods and other vessels for the transport of both persons and
+        <option>49314: Other vessels for the transport of goods and other vessels for the transport of both persons
+            and
             goods</option>
-        <option>49315: Fishing vessels; factory ships and other vessels for processing or preserving fishery products
+        <option>49315: Fishing vessels; factory ships and other vessels for processing or preserving fishery
+            products
         </option>
         <option>49320: Floating or submersible drilling or production platforms</option>
         <option>4951: Rail locomotives and locomotive tenders</option>
@@ -1480,10 +1559,12 @@
         <option>53269: Other constructions for manufacturing</option>
         <option>5326: Mines and industrial plants</option>
         <option>53290: Other civil engineering works</option>
-        <option>54211: General construction services of highways (except elevated highways), streets and roads</option>
+        <option>54211: General construction services of highways (except elevated highways), streets and roads
+        </option>
         <option>54231: General construction services of aqueducts and other water supply conduits, except pipelines
         </option>
-        <option>54242: General construction services of long-distance communication and power lines (cables)</option>
+        <option>54242: General construction services of long-distance communication and power lines (cables)
+        </option>
         <option>54262: General construction services of power plants</option>
         <option>54269: General construction services of other industrial plants</option>
         <option>54290: General construction services of other civil engineering works</option>

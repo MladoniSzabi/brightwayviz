@@ -11,13 +11,17 @@ function loadSideBar() {
         GRAPH_TYPE = localStorage.getItem("graphType")
     }
 
-    console.log(DATABASE, GRAPH_TYPE)
+    if (localStorage.getItem("ttradius")) {
+        TIDY_TREE_RADIUS = parseInt(localStorage.getItem("ttradius"))
+    }
 
     const dbSelect = document.getElementById("sidebar-database").getElementsByTagName("select")[0]
     const graphTypeSelect = document.getElementById("sidebar-graph").getElementsByTagName("select")[0]
+    const radiusInput = document.getElementById("sidebar-radius").getElementsByTagName("input")[0]
 
     dbSelect.value = DATABASE
     graphTypeSelect.value = GRAPH_TYPE
+    radiusInput.value = TIDY_TREE_RADIUS
 
     dbSelect.onchange = (ev) => {
         DATABASE = ev.target.value
@@ -25,9 +29,13 @@ function loadSideBar() {
     }
 
     graphTypeSelect.onchange = (ev) => {
-        console.log(ev.target.value)
         GRAPH_TYPE = ev.target.value
         localStorage.setItem("graphType", ev.target.value)
+    }
+
+    radiusInput.onchange = (ev) => {
+        TIDY_TREE_RADIUS = parseInt(ev.target.value)
+        localStorage.setItem("ttradius", TIDY_TREE_RADIUS)
     }
 
     const closeButton = document.getElementById("sidebar-close")

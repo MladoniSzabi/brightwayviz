@@ -57,15 +57,14 @@ function createRadialGraph(rootNode, viewbox) {
     const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
     const height = 0.9 * vh;
     const width = 0.8 * vw;
-    const radius = 2500
+    const radius = TIDY_TREE_RADIUS
 
     const tree = d3.tree()
         .size([2 * Math.PI, Math.min(width, height) * 1000 - 30])
         .separation((a, b) => ((a.parent == b.parent ? 2 : 2) / a.depth));
 
     // Compute the graph and start the force simulation.
-    const root = tree(d3.hierarchy(rootNode)
-        .sort((a, b) => d3.ascending(a.data.name, b.data.name)));
+    const root = tree(d3.hierarchy(rootNode))
 
     let color = generateColor()
 
@@ -74,12 +73,6 @@ function createRadialGraph(rootNode, viewbox) {
         d._children = d.children;
         if (d.data.colour) {
             d.color = d.data.colour
-        }
-        else if (d.data.tag && getColorFromTag(d.data.tag)) {
-            d.color = getColorFromTag(d.data.tag)
-        }
-        else if (d.data.isAtBoundary) {
-            d.color = generateColor()
         } else {
             //d.color = color
             d.color = getColorForLayer(d.depth);
@@ -103,18 +96,23 @@ function createRadialGraph(rootNode, viewbox) {
         .attr("stroke-opacity", 0.4)
         .attr("stroke-width", 1.5)
         .selectAll()
-        .data(root.links())
-        .join("path")
-        .attr("d", d3.linkRadial()
-            .angle(d => d.x)
-            .radius(d => d.depth * radius));
+        .data(root.links(), d => d.target.id)
+        .join("line")
+        .attr("x1", d => (d.source.depth) * radius * Math.cos(d.source.x - Math.PI))
+        .attr("y1", d => (d.source.depth) * radius * Math.sin(d.source.x - Math.PI) + (d.source.depth == 0 ? 150 : 0))
+        .attr("x2", d => (d.target.depth) * radius * Math.cos(d.target.x - Math.PI))
+        .attr("y2", d => (d.target.depth) * radius * Math.sin(d.target.x - Math.PI) + (d.target.depth == 0 ? 150 : 0));
+    // .join("path")
+    // .attr("d", d3.linkRadial()
+    //     .angle(d => d.x)
+    //     .radius(d => d.depth * radius));
 
     // Append nodes.
     svg.append("g")
         .selectAll()
         .data(root.descendants())
         .join("circle")
-        .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.depth * radius},0)`)
+        .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 180}) translate(${(d.depth) * radius},0) translate(0, ${d.depth == 0 ? 150 : 0})`)
         .attr("fill", d => d.color)
         .attr("stroke", d => d.data.childCount == 0 ? "#fff" : "#000")
         .attr("stroke-width", 3)
@@ -134,7 +132,7 @@ function createRadialGraph(rootNode, viewbox) {
         .attr("fill", d => invertColor(d.color, true))
         .attr("dy", "0.31em")
         .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
-        .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.depth * radius} ,0) rotate(${d.x >= Math.PI ? 180 : 0})`)
+        .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 180}) translate(${(d.depth) * radius} ,0) rotate(${(d.x >= Math.PI / 2 && d.x <= 3 * Math.PI / 2) ? 0 : 180}) translate(0, ${d.depth == 0 ? 150 : 0})`)
         .call(wrap, 10);
 
     return svg;
