@@ -94,6 +94,8 @@ function createRadialGraph(rootNode, viewbox) {
         .attr("height", height)
         .attr("viewBox", viewbox);
 
+    const firstNodeOffset = 200
+
     // Append links.
     svg.append("g")
         .attr("fill", "none")
@@ -104,9 +106,9 @@ function createRadialGraph(rootNode, viewbox) {
         .data(root.links(), d => d.target.id)
         .join("line")
         .attr("x1", d => (d.source.depth) * radius * Math.cos(d.source.x - Math.PI))
-        .attr("y1", d => (d.source.depth) * radius * Math.sin(d.source.x - Math.PI) + (d.source.depth == 0 ? 150 : 0))
+        .attr("y1", d => (d.source.depth) * radius * Math.sin(d.source.x - Math.PI) + (d.source.depth == 0 ? firstNodeOffset : 0))
         .attr("x2", d => (d.target.depth) * radius * Math.cos(d.target.x - Math.PI))
-        .attr("y2", d => (d.target.depth) * radius * Math.sin(d.target.x - Math.PI) + (d.target.depth == 0 ? 150 : 0));
+        .attr("y2", d => (d.target.depth) * radius * Math.sin(d.target.x - Math.PI) + (d.target.depth == 0 ? firstNodeOffset : 0));
     // .join("path")
     // .attr("d", d3.linkRadial()
     //     .angle(d => d.x)
@@ -117,7 +119,7 @@ function createRadialGraph(rootNode, viewbox) {
         .selectAll()
         .data(root.descendants())
         .join("circle")
-        .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 180}) translate(${(d.depth) * radius},0) translate(0, ${d.depth == 0 ? 150 : 0})`)
+        .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 180}) translate(${(d.depth) * radius},0) translate(0, ${d.depth == 0 ? firstNodeOffset : 0})`)
         .attr("fill", d => d.color)
         .attr("stroke", d => d.data.childCount == 0 ? "#fff" : "#000")
         .attr("stroke-width", 3)
@@ -138,7 +140,7 @@ function createRadialGraph(rootNode, viewbox) {
         .attr("fill", d => invertColor(d.color, true))
         .attr("dy", "0.31em")
         .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
-        .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 180}) translate(${(d.depth) * radius} ,0) rotate(${(d.x >= Math.PI / 2 && d.x <= 3 * Math.PI / 2) ? 0 : 180}) translate(0, ${d.depth == 0 ? 150 : 0})`)
+        .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 180}) translate(${(d.depth) * radius} ,0) rotate(${(d.x >= Math.PI / 2 && d.x <= 3 * Math.PI / 2) ? 0 : 180}) translate(0, ${d.depth == 0 ? firstNodeOffset : 0})`)
         .call(wrap, 10)
         .on('click', handleClick)
 
