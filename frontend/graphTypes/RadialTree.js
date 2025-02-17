@@ -78,8 +78,9 @@ function createRadialGraph(rootNode, viewbox) {
         d._children = d.children;
         if (d.data.colour) {
             d.color = d.data.colour
+        } else if (GRAPH_COLOURING == "tags" && d.data.tag && getColorFromTag(d.data.tag)) {
+            d.color = getColorFromTag(d.data.tag)
         } else {
-            //d.color = color
             d.color = getColorForLayer(d.depth);
         }
     });

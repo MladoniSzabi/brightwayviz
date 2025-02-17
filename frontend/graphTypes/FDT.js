@@ -315,10 +315,10 @@ function setIds(tree, start, depth, height) {
         console.log(tree.children[i].data)
         if (tree.children[i].data["colour"]) {
             tree.children[i]["color"] = tree.children[i].data["colour"]
-        } else if (tree.children[i].data["tag"] && getColorFromTag(tree.children[i].data["tag"])) {
+        } else if (GRAPH_COLOURING == "tags" && tree.children[i].data["tag"] && getColorFromTag(tree.children[i].data["tag"])) {
             tree.children[i]["color"] = getColorFromTag(tree.children[i].data["tag"])
         }
-        else if (tree.children[i].data.isAtBoundary) {
+        else if (GRAPH_COLOURING == "tags" && tree.children[i].data.isAtBoundary) {
             tree.children[i]['color'] = generateColor()
         } else {
             //tree.children[i]['color'] = tree.color
@@ -421,13 +421,13 @@ function createFDTGraph(rootNode, viewbox) {
         if (d.data.colour) {
             d.color = d.data.colour
         }
-        else if (d.data.tag && getColorFromTag(d.data.tag)) {
+        else if (GRAPH_COLOURING == "tags" && d.data.tag && getColorFromTag(d.data.tag)) {
             if (d.depth == 0)
                 d.color = "#983334"
             else
                 d.color = getColorFromTag(d.data.tag)
         }
-        else if (d.data.isAtBoundary) {
+        else if (GRAPH_COLOURING == "tags" && d.data.isAtBoundary) {
             d.color = generateColor()
         } else {
             //d.color = color

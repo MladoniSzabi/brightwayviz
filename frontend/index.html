@@ -10,6 +10,7 @@
         var DATABASE = "current"
         var GRAPH_TYPE = "fdt"
         var TIDY_TREE_RADIUS = 800
+        var GRAPH_COLOURING = "tags"
 
 
     </script>
@@ -52,6 +53,18 @@
         <div id="sidebar-radius">
             <p>Pick the radius for the tidy radial tree</p>
             <input type="number" min="100" step="50" />
+        </div>
+
+        <div id="sidebar-colouring">
+            <p>Pick how you would like the nodes to be coloured</p>
+            <p id="sidebar-colouring-input-container">
+                <span>Colour by tags</span>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+                <span>Colour by layers</span>
+            </p>
         </div>
     </div>
     <h2 id="activities-heading">Database Search</h2>

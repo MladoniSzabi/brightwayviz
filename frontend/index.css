@@ -327,3 +327,69 @@ span.zoom {
     cursor: pointer;
     user-select: none;
 }
+
+#sidebar-colouring {
+    position: relative;
+}
+
+#sidebar-colouring-input-container {
+    display: flex;
+    align-items: flex-start;
+}
+
+#sidebar-colouring-input-container>span:first-child {
+    margin-right: 4px;
+}
+
+#sidebar-colouring-input-container>span:last-child {
+    margin-left: 4px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    --widget-size: 1em;
+    cursor: pointer;
+    transition: .4s;
+    position: relative;
+    width: calc(2 * var(--widget-size) + 8px);
+    display: inline-block;
+    height: calc(var(--widget-size) + 8px);
+    background-color: #ccc;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: var(--widget-size);
+    width: var(--widget-size);
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    transform: translateX(var(--widget-size));
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
