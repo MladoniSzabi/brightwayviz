@@ -95,7 +95,7 @@ function createRadialGraph(rootNode, viewbox) {
         .attr("height", height)
         .attr("viewBox", viewbox);
 
-    const firstNodeOffset = 200
+    const firstNodeOffset = 0
 
     // Append links.
     svg.append("g")
@@ -107,9 +107,9 @@ function createRadialGraph(rootNode, viewbox) {
         .data(root.links(), d => d.target.id)
         .join("line")
         .attr("x1", d => (d.source.depth) * radius * Math.cos(d.source.x - Math.PI))
-        .attr("y1", d => (d.source.depth) * radius * Math.sin(d.source.x - Math.PI) + (d.source.depth == 0 ? firstNodeOffset : 0))
+        .attr("y1", d => ((d.source.depth) * radius + (d.source.depth == 0 ? firstNodeOffset : 0)) * Math.sin(d.source.x - Math.PI))
         .attr("x2", d => (d.target.depth) * radius * Math.cos(d.target.x - Math.PI))
-        .attr("y2", d => (d.target.depth) * radius * Math.sin(d.target.x - Math.PI) + (d.target.depth == 0 ? firstNodeOffset : 0));
+        .attr("y2", d => ((d.target.depth) * radius + (d.target.depth == 0 ? firstNodeOffset : 0)) * Math.sin(d.target.x - Math.PI));
     // .join("path")
     // .attr("d", d3.linkRadial()
     //     .angle(d => d.x)
