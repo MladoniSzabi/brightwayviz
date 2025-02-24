@@ -313,14 +313,15 @@ function setIds(tree, start, depth, height) {
         tree.children[i]['x'] = pos.x
         tree.children[i]['y'] = pos.y
         console.log(tree.children[i].data)
-        if (tree.children[i].data["colour"]) {
+        if (tree.children[i].data["colour"])
             tree.children[i]["color"] = tree.children[i].data["colour"]
-        } else if (GRAPH_COLOURING == "tags" && tree.children[i].data["tag"] && getColorFromTag(tree.children[i].data["tag"])) {
+        else if (GRAPH_COLOURING == "tags" && d.depth == 0)
+            tree.children[i]["color"] = "#983334"
+        else if (GRAPH_COLOURING == "tags" && tree.children[i].data["tag"] && getColorFromTag(tree.children[i].data["tag"]))
             tree.children[i]["color"] = getColorFromTag(tree.children[i].data["tag"])
-        }
-        else if (GRAPH_COLOURING == "tags" && tree.children[i].data.isAtBoundary) {
+        else if (GRAPH_COLOURING == "tags" && tree.children[i].data.isAtBoundary)
             tree.children[i]['color'] = generateColor()
-        } else {
+        else {
             //tree.children[i]['color'] = tree.color
             tree.children[i]['color'] = getColorForLayer(tree.depth);
         }
@@ -418,18 +419,15 @@ function createFDTGraph(rootNode, viewbox) {
     root.descendants().forEach((d, i) => {
         d.id = i;
         d._children = d.children;
-        if (d.data.colour) {
+        if (d.data.colour)
             d.color = d.data.colour
-        }
-        else if (GRAPH_COLOURING == "tags" && d.data.tag && getColorFromTag(d.data.tag)) {
-            if (d.depth == 0)
-                d.color = "#983334"
-            else
-                d.color = getColorFromTag(d.data.tag)
-        }
-        else if (GRAPH_COLOURING == "tags" && d.data.isAtBoundary) {
+        else if (GRAPH_COLOURING == "tags" && d.depth == 0)
+            d.color = "#983334"
+        else if (GRAPH_COLOURING == "tags" && d.data.tag && getColorFromTag(d.data.tag))
+            d.color = getColorFromTag(d.data.tag)
+        else if (GRAPH_COLOURING == "tags" && d.data.isAtBoundary)
             d.color = generateColor()
-        } else {
+        else {
             //d.color = color
             d.color = getColorForLayer(d.depth);
         }

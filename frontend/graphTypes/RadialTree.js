@@ -76,13 +76,14 @@ function createRadialGraph(rootNode, viewbox) {
     root.descendants().forEach((d, i) => {
         d.id = i;
         d._children = d.children;
-        if (d.data.colour) {
+        if (d.data.colour)
             d.color = d.data.colour
-        } else if (GRAPH_COLOURING == "tags" && d.data.tag && getColorFromTag(d.data.tag)) {
+        else if (GRAPH_COLOURING == "tags" && d.depth == 0)
+            d.color = "#983334"
+        else if (GRAPH_COLOURING == "tags" && d.data.tag && getColorFromTag(d.data.tag))
             d.color = getColorFromTag(d.data.tag)
-        } else {
+        else
             d.color = getColorForLayer(d.depth);
-        }
     });
 
     if (viewbox == null) {
