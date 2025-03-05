@@ -312,17 +312,16 @@ function setIds(tree, start, depth, height) {
         let pos = calculateNewNodePosition(tree, i, tree.children.length)
         tree.children[i]['x'] = pos.x
         tree.children[i]['y'] = pos.y
-        console.log(tree.children[i].data)
+
         if (tree.children[i].data["colour"])
             tree.children[i]["color"] = tree.children[i].data["colour"]
-        else if (GRAPH_COLOURING == "tags" && d.depth == 0)
+        else if (GRAPH_COLOURING == "tags" && tree.children[i].depth == 0)
             tree.children[i]["color"] = "#983334"
         else if (GRAPH_COLOURING == "tags" && tree.children[i].data["tag"] && getColorFromTag(tree.children[i].data["tag"]))
             tree.children[i]["color"] = getColorFromTag(tree.children[i].data["tag"])
         else if (GRAPH_COLOURING == "tags" && tree.children[i].data.isAtBoundary)
             tree.children[i]['color'] = generateColor()
         else {
-            //tree.children[i]['color'] = tree.color
             tree.children[i]['color'] = getColorForLayer(tree.depth);
         }
         start = setIds(tree.children[i], start, depth, height)

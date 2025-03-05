@@ -4,3 +4,4 @@ databases.db
 dbs/
 *.db
 emissions.json
+data/
