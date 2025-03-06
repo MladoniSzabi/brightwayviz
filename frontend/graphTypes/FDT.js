@@ -113,6 +113,24 @@ function populateAggregationSidePanel(data) {
         document.getElementById("side-panel-activities").style.display = "none"
         document.getElementById("side-panel-activities").previousElementSibling.style.display = "none"
     }
+
+    if ("contribution" in data) {
+        document.getElementById("side-panel-contribution").style.display = "inline"
+        document.getElementById("side-panel-contribution").previousElementSibling.style.display = "inline"
+        document.getElementById("side-panel-contribution").textContent = String(data["contribution"])
+    } else {
+        document.getElementById("side-panel-contribution").style.display = "none"
+        document.getElementById("side-panel-contribution").previousElementSibling.style.display = "none"
+    }
+
+    if ("directContribution" in data) {
+        document.getElementById("side-panel-dcontribution").style.display = "inline"
+        document.getElementById("side-panel-dcontribution").previousElementSibling.style.display = "inline"
+        document.getElementById("side-panel-dcontribution").textContent = String(data["directContribution"])
+    } else {
+        document.getElementById("side-panel-dcontribution").style.display = "none"
+        document.getElementById("side-panel-dcontribution").previousElementSibling.style.display = "none"
+    }
 }
 
 function populateSidePanel(data) {

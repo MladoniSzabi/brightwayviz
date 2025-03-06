@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+project(MyProj LANGUAGES C CXX)
+set(CMAKE_CXX_STANDARD 23)
+add_subdirectory(external)
+add_executable(Main main.cpp)
+target_link_libraries(Main uWebSockets)
